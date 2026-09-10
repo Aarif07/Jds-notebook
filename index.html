@@ -1,0 +1,4008 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Jaipur Door Solutions - डिजिटल हिसाब बही</title>
+
+<!-- PWA SETTINGS -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3a8a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JDS हिसाब">
+<link rel="apple-touch-icon" href="logo.png">
+
+<!-- PWA SERVICE WORKER REGISTRATION -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then((reg) => console.log('✅ PWA Service Worker Registered Successfully!'))
+        .catch((err) => console.log('Service Worker Registration Error:', err));
+    });
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1e3a8a;
+  --primary-light: #eff6ff;
+  --primary-dark: #172554;
+  --accent: #0284c7;
+  --success: #15803d;
+  --success-light: #dcfce7;
+  --danger: #b91c1c;
+  --danger-light: #fee2e2;
+  --warning: #b45309;
+  --warning-light: #fef3c7;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --border-focus: #3b82f6;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --radius: 12px;
+  --font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, sans-serif;
+}
+
+[data-theme="dark"] {
+  --primary: #3b82f6;
+  --primary-light: #1e293b;
+  --primary-dark: #60a5fa;
+  --accent: #38bdf8;
+  --success: #22c55e;
+  --success-light: #14532d;
+  --danger: #ef4444;
+  --danger-light: #7f1d1d;
+  --warning: #f59e0b;
+  --warning-light: #78350f;
+  --bg: #0f172a;
+  --card-bg: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --border-focus: #60a5fa;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  font-family: var(--font-family);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-main);
+  line-height: 1.5;
+  padding-bottom: 84px;
+  min-height: 100vh;
+}
+
+/* FULL-SCREEN PIN LOGIN PAGE WITH CUSTOM BACKGROUND IMAGE */
+#loginScreen {
+  position: fixed;
+  inset: 0;
+  background-color: #0b0f19;
+  background-image: linear-gradient(rgba(11, 15, 25, 0.72), rgba(11, 15, 25, 0.82)), url('bg.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 300px;
+  background: rgba(30, 41, 59, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 30px 22px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-lock-icon {
+  font-size: 38px;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 4px 10px rgba(239, 68, 68, 0.4));
+}
+
+.login-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.login-pin-input {
+  width: 100%;
+  padding: 13px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.4em;
+  background: rgba(15, 23, 42, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 12px;
+  outline: none;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+}
+
+.login-pin-input:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.35);
+}
+
+.login-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #b91c1c, #dc2626);
+  color: #ffffff;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4);
+  transition: transform 0.15s ease;
+}
+
+.login-btn:active {
+  transform: scale(0.97);
+}
+
+/* APP HEADER */
+header.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #1e3a8a, #dc2626);
+  color: #fff;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.brand-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.brand-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: var(--text-main);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--card-bg);
+}
+
+.cloud-badge {
+  font-size: 10px;
+  padding: 4px 7px;
+  border-radius: 6px;
+  background: #dcfce7;
+  color: #15803d;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 14px;
+}
+
+/* SMART ALERTS */
+.smart-alerts-container {
+  margin-bottom: 14px;
+}
+
+.smart-alert-card {
+  background-color: var(--card-bg);
+  border-left: 4px solid var(--accent);
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.smart-alert-card.warning {
+  border-left-color: var(--warning);
+  background-color: var(--warning-light);
+  color: #78350f;
+}
+
+.smart-alert-card.danger {
+  border-left-color: var(--danger);
+  background-color: var(--danger-light);
+  color: #7f1d1d;
+}
+
+.smart-alert-text {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ACCORDIONS ON HOME */
+.accordion-wrapper {
+  margin-bottom: 14px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.accordion-header {
+  padding: 13px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: var(--card-bg);
+  user-select: none;
+  transition: background-color 0.15s;
+}
+
+.accordion-header:hover {
+  background-color: var(--primary-light);
+}
+
+.accordion-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.accordion-arrow {
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.accordion-wrapper.open .accordion-arrow {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  display: none;
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.accordion-wrapper.open .accordion-content {
+  display: block;
+}
+
+/* STATS GRID */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media(min-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stat-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.stat-card.income::before { background-color: var(--success); }
+.stat-card.expense::before { background-color: var(--danger); }
+.stat-card.balance::before { background-color: var(--accent); }
+.stat-card.warning::before { background-color: var(--warning); }
+
+.stat-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.stat-amount {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.stat-amount.pos { color: var(--success); }
+.stat-amount.neg { color: var(--danger); }
+.stat-amount.neutral { color: var(--primary); }
+.stat-amount.alert { color: var(--warning); }
+
+/* QUICK ACTIONS */
+.quick-action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.action-btn {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+  background-color: var(--primary-light);
+}
+
+.action-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.action-icon.green { background-color: var(--success-light); color: var(--success); }
+.action-icon.red { background-color: var(--danger-light); color: var(--danger); }
+.action-icon.blue { background-color: var(--primary-light); color: var(--accent); }
+.action-icon.yellow { background-color: var(--warning-light); color: var(--warning); }
+
+.action-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+/* CARDS & LISTS */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.card-body {
+  padding: 14px 16px;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.search-input {
+  flex: 1 1 200px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-size: 13.5px;
+  color: var(--text-main);
+}
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.item-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.item-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-desc {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.item-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background-color: var(--border);
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.item-badge.cash { background-color: #fef08a; color: #854d0e; }
+.item-badge.upi { background-color: #e0e7ff; color: #3730a3; }
+.item-badge.bank { background-color: #dbeafe; color: #1e40af; }
+.item-badge.active { background-color: var(--success-light); color: var(--success); }
+.item-badge.paused { background-color: var(--warning-light); color: var(--warning); }
+.item-badge.done { background-color: #e2e8f0; color: #475569; }
+
+.item-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.item-amount {
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.item-amount.green { color: var(--success); }
+.item-amount.red { color: var(--danger); }
+.item-amount.blue { color: var(--accent); }
+
+.item-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  justify-content: flex-end;
+}
+
+.btn-tiny {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-main);
+}
+
+.btn-tiny.delete {
+  color: var(--danger);
+  border-color: var(--danger-light);
+}
+
+.btn-tiny.edit {
+  color: var(--accent);
+  border-color: var(--primary-light);
+}
+
+/* FORMS */
+.form-group {
+  margin-bottom: 13px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 5px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 13.5px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--card-bg);
+  color: var(--text-main);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+textarea.form-control {
+  min-height: 65px;
+  resize: vertical;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.btn-primary { background-color: #1e3a8a; color: #fff; }
+.btn-success { background-color: var(--success); color: #fff; }
+.btn-danger { background-color: var(--danger); color: #fff; }
+.btn-secondary { background-color: var(--border); color: var(--text-main); }
+.btn-whatsapp { background-color: #25d366; color: #fff; font-weight: 700; }
+
+/* BOTTOM NAV */
+nav.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 62px;
+  background-color: var(--card-bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 40;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 4px 0;
+}
+
+.nav-item.active {
+  color: #1e3a8a;
+  font-weight: 700;
+}
+
+.nav-icon {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.nav-label {
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.fab-btn {
+  position: fixed;
+  bottom: 72px;
+  right: 18px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e3a8a, #dc2626);
+  color: #ffffff;
+  border: none;
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+  cursor: pointer;
+  z-index: 39;
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 60;
+}
+
+@media(min-width: 640px) {
+  .modal-overlay {
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+.modal-container {
+  background-color: var(--card-bg);
+  width: 100%;
+  max-width: 540px;
+  max-height: 88vh;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  overflow-y: auto;
+  padding: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+@media(min-width: 640px) {
+  .modal-container {
+    border-radius: 16px;
+    max-height: 85vh;
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 12px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.data-table th, .data-table td {
+  padding: 9px 11px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.data-table th {
+  background-color: var(--primary-light);
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+#toast-box {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1e293b;
+  color: #f8fafc;
+  padding: 9px 18px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 100000;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding-bottom: 4px;
+}
+
+.tab-btn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tab-btn.active {
+  background-color: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+@media print {
+  body { background: #fff; color: #000; padding-bottom: 0; }
+  header.app-header, nav.bottom-nav, .fab-btn, .no-print, #loginScreen { display: none !important; }
+  .container { max-width: 100%; padding: 0; }
+  .card { border: 1px solid #ccc; box-shadow: none; break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<div id="toast-box"></div>
+
+<!-- CLEAN FULL-SCREEN PIN LOGIN PAGE -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-lock-icon">🔒</div>
+    <div class="login-heading">सुरक्षा PIN दर्ज करें</div>
+    <input type="password" id="pinInput" placeholder="••••" maxlength="6" class="login-pin-input" onkeypress="if(event.key==='Enter') loginKarein();">
+    <button onclick="loginKarein()" class="login-btn">अनलॉक करें 🔓</button>
+  </div>
+</div>
+
+<!-- APP HEADER -->
+<header class="app-header">
+  <div class="header-brand">
+    <div class="brand-icon">J</div>
+    <div>
+      <div class="brand-title">Jaipur Door Solutions</div>
+      <div class="brand-subtitle">डिजिटल हिसाब बही व लेजर</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div id="cloudStatusBadge" class="cloud-badge no-print" title="Firebase Cloud Connected">☁️ Sync</div>
+    <button class="icon-btn no-print" onclick="khojModalKholo()" title="खोजें">
+      🔍 <span>Search</span>
+    </button>
+    <button class="icon-btn no-print" onclick="themeBadlo()" title="थीम">
+      🌓
+    </button>
+  </div>
+</header>
+
+<!-- MAIN CONTAINER -->
+<main class="container">
+  <div id="view-container"></div>
+</main>
+
+<!-- FLOATING QUICK ADD BUTTON -->
+<button class="fab-btn no-print" onclick="quickAddModalKholo()" title="नया जोड़ें">+</button>
+
+<!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav no-print">
+  <button class="nav-item active" id="nav-ghar" onclick="viewBadlo('ghar')">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="nav-item" id="nav-sites" onclick="viewBadlo('sites')">
+    <span class="nav-icon">🏗️</span>
+    <span class="nav-label">Sites</span>
+  </button>
+  <button class="nav-item" id="nav-rozana" onclick="viewBadlo('rozana')">
+    <span class="nav-icon">📖</span>
+    <span class="nav-label">Daily Khata</span>
+  </button>
+  <button class="nav-item" id="nav-udhaar" onclick="viewBadlo('udhaar')">
+    <span class="nav-icon">🤝</span>
+    <span class="nav-label">Udhaar</span>
+  </button>
+  <button class="nav-item" id="nav-aur" onclick="viewBadlo('aur')">
+    <span class="nav-icon">⚙️</span>
+    <span class="nav-label">More</span>
+  </button>
+</nav>
+
+<!-- MODAL POPUP -->
+<div class="modal-overlay" id="main-modal" onclick="modalBaharClick(event)">
+  <div class="modal-container" id="modal-content"></div>
+</div>
+
+<!-- FIREBASE CLOUD REALTIME MODULE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = { 
+    apiKey: "AIzaSyCEDfTc2S-rt85yybINx0NVixeQkVczxOQ", 
+    authDomain: "rahmat-foundation.firebaseapp.com", 
+    projectId: "rahmat-foundation", 
+    storageBucket: "rahmat-foundation.firebasestorage.app", 
+    messagingSenderId: "1000128409503", 
+    appId: "1:1000128409503:web:94173d012d4aace1a7d7aa", 
+    measurementId: "G-J6PPRSZ6P6" 
+  };
+
+  try {
+    const fbApp = initializeApp(firebaseConfig);
+    const db = initializeFirestore(fbApp, {
+      localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})
+    });
+
+    async function syncToFirebaseCloud() {
+      try {
+        let payload = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        await setDoc(doc(db, "cloudAppData", "jaipurDoorSolutionsRecord"), {
+          appPayload: payload,
+          lastUpdated: new Date().toISOString()
+        });
+        const badge = document.getElementById("cloudStatusBadge");
+        if(badge) {
+          badge.innerText = "☁️ Synced";
+          badge.style.background = "#dcfce7";
+          badge.style.color = "#15803d";
+        }
+      } catch(e) {
+        console.log("Offline mode or cloud sync notice:", e);
+      }
+    }
+
+    async function loadFromFirebaseCloud() {
+      try {
+        let snap = await getDoc(doc(db, "cloudAppData", "jaipurDoorSolutionsRecord"));
+        if (snap.exists()) {
+          let cloudData = snap.data();
+          if (cloudData && cloudData.appPayload) {
+            appData = cloudData.appPayload;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+            renderApp();
+            toastDikhaye("☁️ क्लाउड डेटा लोड हो गया!");
+          }
+        }
+      } catch(e) {
+        console.log("Cloud load fallback to local:", e);
+      }
+    }
+
+    function startRealtimeSync() {
+      try {
+        const docRef = doc(db, "cloudAppData", "jaipurDoorSolutionsRecord");
+        onSnapshot(docRef, (snapshot) => {
+          if (!snapshot.exists()) return;
+          const cloudData = snapshot.data();
+          if (!cloudData || !cloudData.appPayload) return;
+          
+          let localRaw = localStorage.getItem(STORAGE_KEY);
+          let cloudRaw = JSON.stringify(cloudData.appPayload);
+          if (localRaw !== cloudRaw) {
+            appData = cloudData.appPayload;
+            localStorage.setItem(STORAGE_KEY, cloudRaw);
+            renderApp();
+          }
+        });
+      } catch(e) {
+        console.log("Realtime sync listener:", e);
+      }
+    }
+
+    window.syncToFirebaseCloud = syncToFirebaseCloud;
+    window.loadFromFirebaseCloud = loadFromFirebaseCloud;
+    window.startRealtimeSync = startRealtimeSync;
+
+    if (sessionStorage.getItem('jds_logged_in') === 'true') {
+      loadFromFirebaseCloud();
+      startRealtimeSync();
+    }
+  } catch(err) {
+    console.log("Firebase module offline:", err);
+  }
+</script>
+
+<script>
+const STORAGE_KEY = 'jaipur_door_solutions_khata_v2';
+
+let appData = {
+  settings: {
+    pin: '1234',
+    dark_mode: false,
+    categories_site: ['सामान', 'सीमेंट', 'लोहा / हार्डवेयर', 'दरवाजे व फिटिंग', 'ट्रांसपोर्ट', 'मिस्त्री मजदूरी', 'हेल्पर मजदूरी', 'खाना', 'मशीन/टूल्स', 'डीजल/पेट्रोल', 'रिपेयर', 'दूसरा'],
+    categories_daily: ['दुकान खर्च', 'बिजनेस', 'खाना', 'पेट्रोल/डीजल', 'सफर', 'बिल', 'किराना', 'उधार दिया', 'पर्सनल', 'दूसरा'],
+    income_sources_daily: ['बिजनेस बिक्री', 'साइट पेमेंट', 'उधार वापस मिला', 'अन्य कमाई']
+  },
+  sites: [],
+  site_transactions: [],
+  workers: [],
+  attendance: [],
+  worker_payments: [],
+  daily_transactions: [],
+  loans: [],
+  loan_repayments: [],
+  activity_logs: []
+};
+
+function loginKarein() {
+  const pinEntered = document.getElementById('pinInput').value.trim();
+  const validPin = (appData.settings && appData.settings.pin) ? appData.settings.pin : '1234';
+
+  if (pinEntered === validPin) {
+    sessionStorage.setItem('jds_logged_in', 'true');
+    document.getElementById('loginScreen').style.display = 'none';
+    toastDikhaye('✅ लॉगिन सफल!');
+    if (window.loadFromFirebaseCloud) window.loadFromFirebaseCloud();
+    if (window.startRealtimeSync) window.startRealtimeSync();
+  } else {
+    toastDikhaye('❌ गलत PIN! दोबारा कोशिश करें');
+    document.getElementById('pinInput').value = '';
+  }
+}
+
+function lockApp() {
+  sessionStorage.removeItem('jds_logged_in');
+  location.reload();
+}
+
+function dataLoadKarein() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      appData = { ...appData, ...parsed };
+      if (appData.settings.dark_mode) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    } catch(e) {
+      console.error(e);
+    }
+  } else {
+    dataMehfoozKarein();
+  }
+}
+
+function dataMehfoozKarein() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+  if (window.syncToFirebaseCloud) {
+    window.syncToFirebaseCloud();
+  }
+}
+
+function activityJodein(kriya, vivran) {
+  const log = {
+    id: 'act_' + Date.now(),
+    tareekh: aajKiTareekh(),
+    samay: new Date().toLocaleTimeString('hi-IN'),
+    kriya: kriya,
+    vivran: vivran
+  };
+  appData.activity_logs.unshift(log);
+  if (appData.activity_logs.length > 200) appData.activity_logs.pop();
+  dataMehfoozKarein();
+}
+
+function rupayeFormat(num) {
+  if (num === null || num === undefined || isNaN(num)) return '₹0';
+  const val = Math.round(num);
+  const isNeg = val < 0;
+  const absVal = Math.abs(val).toString();
+  
+  let lastThree = absVal.substring(absVal.length - 3);
+  const otherNumbers = absVal.substring(0, absVal.length - 3);
+  if (otherNumbers !== '') {
+    lastThree = ',' + lastThree;
+  }
+  const formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+  return (isNeg ? '-' : '') + '₹' + formatted;
+}
+
+function aajKiTareekh() {
+  const d = new Date();
+  const yr = d.getFullYear();
+  const mo = String(d.getMonth() + 1).padStart(2, '0');
+  const da = String(d.getDate()).padStart(2, '0');
+  return `${yr}-${mo}-${da}`;
+}
+
+function tareekhDisplay(isoStr) {
+  if (!isoStr) return '-';
+  const parts = isoStr.split('-');
+  if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  return isoStr;
+}
+
+function toastDikhaye(sandesh) {
+  const t = document.getElementById('toast-box');
+  t.innerHTML = `<span>✓</span> <span>${sandesh}</span>`;
+  t.style.display = 'flex';
+  setTimeout(() => { t.style.display = 'none'; }, 2600);
+}
+
+function modalBaharClick(e) {
+  if (e.target.id === 'main-modal') modalBandKarein();
+}
+
+function modalBandKarein() {
+  document.getElementById('main-modal').style.display = 'none';
+}
+
+function modalKholo(htmlContent) {
+  document.getElementById('modal-content').innerHTML = htmlContent;
+  document.getElementById('main-modal').style.display = 'flex';
+}
+
+function themeBadlo() {
+  const curr = document.documentElement.getAttribute('data-theme');
+  if (curr === 'dark') {
+    document.documentElement.removeAttribute('data-theme');
+    appData.settings.dark_mode = false;
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    appData.settings.dark_mode = true;
+  }
+  dataMehfoozKarein();
+}
+
+let currentView = 'ghar';
+let activeSiteId = null;
+let activeWorkerId = null;
+
+function viewBadlo(viewName, param = null) {
+  currentView = viewName;
+  if (viewName === 'site_detail' && param) {
+    activeSiteId = param;
+  } else if (viewName === 'worker_detail' && param) {
+    activeWorkerId = param;
+  }
+
+  ['ghar', 'sites', 'rozana', 'udhaar', 'aur'].forEach(nav => {
+    const el = document.getElementById(`nav-${nav}`);
+    if (el) {
+      if ((viewName === 'ghar' && nav === 'ghar') ||
+          (viewName.startsWith('site') && nav === 'sites') ||
+          (viewName === 'rozana' && nav === 'rozana') ||
+          (viewName === 'udhaar' && nav === 'udhaar') ||
+          ((viewName === 'aur' || viewName.startsWith('worker') || viewName === 'hajiri' || viewName === 'report' || viewName === 'setting') && nav === 'aur')) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    }
+  });
+
+  window.scrollTo(0, 0);
+  renderApp();
+}
+
+function calculateSiteSummary(siteId) {
+  const site = appData.sites.find(s => s.id === siteId);
+  if (!site) return { shuru_baki: 0, kul_aaya: 0, direct_kharch: 0, worker_payment: 0, kul_kharch: 0, baki: 0 };
+
+  const shuru_baki = Number(site.shuru_baki) || 0;
+  const st = appData.site_transactions.filter(t => t.site_id === siteId);
+  const kul_aaya = st.filter(t => t.prakar === 'aaya').reduce((sum, t) => sum + (Number(t.rakam) || 0), 0);
+  const direct_kharch = st.filter(t => t.prakar === 'kharch').reduce((sum, t) => sum + (Number(t.rakam) || 0), 0);
+
+  const siteWorkerIds = appData.workers.filter(w => w.site_id === siteId || (w.site_naam && w.site_naam === site.naam)).map(w => w.id);
+  const worker_payments = appData.worker_payments
+    .filter(p => p.site_id === siteId || siteWorkerIds.includes(p.worker_id))
+    .reduce((sum, p) => sum + (Number(p.rakam) || 0), 0);
+
+  const kul_kharch = direct_kharch + worker_payments;
+  const baki = (shuru_baki + kul_aaya) - kul_kharch;
+
+  return { shuru_baki, kul_aaya, direct_kharch, worker_payment: worker_payments, kul_kharch, baki };
+}
+
+function calculateWorkerSummary(workerId, selectedMonthStr = null) {
+  const worker = appData.workers.find(w => w.id === workerId);
+  if (!worker) return { hazir: 0, gair_hazir: 0, aadha: 0, chhutti: 0, overtime_hours: 0, kul_kamai: 0, kul_diya: 0, kul_advance: 0, baki: 0 };
+
+  let attList = appData.attendance.filter(a => a.worker_id === workerId);
+  let payList = appData.worker_payments.filter(p => p.worker_id === workerId);
+
+  if (selectedMonthStr) {
+    attList = attList.filter(a => a.tareekh && a.tareekh.startsWith(selectedMonthStr));
+    payList = payList.filter(p => p.tareekh && p.tareekh.startsWith(selectedMonthStr));
+  }
+
+  let hazir = 0;
+  let gair_hazir = 0;
+  let aadha = 0;
+  let chhutti = 0;
+  let overtime_hours = 0;
+
+  attList.forEach(a => {
+    if (a.sthiti === 'hazir') hazir++;
+    else if (a.sthiti === 'gair_hazir') gair_hazir++;
+    else if (a.sthiti === 'aadha') aadha++;
+    else if (a.sthiti === 'chhutti') chhutti++;
+
+    overtime_hours += Number(a.overtime_ghante) || 0;
+  });
+
+  const dailyRate = Number(worker.rate) || 0;
+  const otRate = Number(worker.overtime_rate) || 0;
+  const hazirKamai = hazir * dailyRate;
+  const aadhaKamai = aadha * (dailyRate / 2);
+  const otKamai = overtime_hours * otRate;
+  const kul_kamai = Math.round(hazirKamai + aadhaKamai + otKamai);
+
+  let kul_diya = 0;
+  let kul_advance = 0;
+
+  payList.forEach(p => {
+    const amt = Number(p.rakam) || 0;
+    kul_diya += amt;
+    if (p.prakar === 'advance') kul_advance += amt;
+  });
+
+  const baki = kul_kamai - kul_diya;
+
+  return { hazir, gair_hazir, aadha, chhutti, overtime_hours, kul_kamai, kul_diya, kul_advance, baki };
+}
+
+function calculateUdhaarSummary() {
+  let kul_diya = 0;
+  let kul_diya_wapas = 0;
+  let kul_liya = 0;
+  let kul_liya_wapas = 0;
+
+  appData.loans.forEach(loan => {
+    const rakam = Number(loan.rakam) || 0;
+    const repayments = appData.loan_repayments
+      .filter(r => r.loan_id === loan.id)
+      .reduce((s, r) => s + (Number(r.rakam) || 0), 0);
+
+    if (loan.disha === 'diya') {
+      kul_diya += rakam;
+      kul_diya_wapas += repayments;
+    } else {
+      kul_liya += rakam;
+      kul_liya_wapas += repayments;
+    }
+  });
+
+  return {
+    lena_hai: kul_diya - kul_diya_wapas,
+    dena_hai: kul_liya - kul_liya_wapas,
+    kul_diya,
+    kul_diya_wapas,
+    kul_liya,
+    kul_liya_wapas
+  };
+}
+
+function calculateGharDashboard() {
+  const aaj = aajKiTareekh();
+  const currMonth = aaj.substring(0, 7);
+
+  let aaj_aaya = 0;
+  let aaj_kharch = 0;
+
+  appData.daily_transactions.filter(t => t.tareekh === aaj).forEach(t => {
+    if (t.prakar === 'aaya') aaj_aaya += Number(t.rakam) || 0;
+    if (t.prakar === 'kharch') aaj_kharch += Number(t.rakam) || 0;
+  });
+
+  appData.site_transactions.filter(t => t.tareekh === aaj).forEach(t => {
+    if (t.prakar === 'aaya') aaj_aaya += Number(t.rakam) || 0;
+    if (t.prakar === 'kharch') aaj_kharch += Number(t.rakam) || 0;
+  });
+
+  appData.worker_payments.filter(t => t.tareekh === aaj).forEach(t => {
+    aaj_kharch += Number(t.rakam) || 0;
+  });
+
+  let mahine_aaya = 0;
+  let mahine_kharch = 0;
+
+  appData.daily_transactions.filter(t => t.tareekh && t.tareekh.startsWith(currMonth)).forEach(t => {
+    if (t.prakar === 'aaya') mahine_aaya += Number(t.rakam) || 0;
+    if (t.prakar === 'kharch') mahine_kharch += Number(t.rakam) || 0;
+  });
+
+  appData.site_transactions.filter(t => t.tareekh && t.tareekh.startsWith(currMonth)).forEach(t => {
+    if (t.prakar === 'aaya') mahine_aaya += Number(t.rakam) || 0;
+    if (t.prakar === 'kharch') mahine_kharch += Number(t.rakam) || 0;
+  });
+
+  appData.worker_payments.filter(t => t.tareekh && t.tareekh.startsWith(currMonth)).forEach(t => {
+    mahine_kharch += Number(t.rakam) || 0;
+  });
+
+  let worker_payment_baki = 0;
+  appData.workers.forEach(w => {
+    const s = calculateWorkerSummary(w.id);
+    if (s.baki > 0) worker_payment_baki += s.baki;
+  });
+
+  const activeSites = appData.sites.filter(s => s.sthiti === 'चालू').length;
+  const totalWorkers = appData.workers.length;
+  const udhaar = calculateUdhaarSummary();
+
+  const total_daily_net = appData.daily_transactions.reduce((acc, t) => acc + (t.prakar === 'aaya' ? Number(t.rakam) : -Number(t.rakam)), 0);
+  const total_site_net = appData.sites.reduce((acc, s) => acc + calculateSiteSummary(s.id).baki, 0);
+  const haath_mein_rokad = total_daily_net + total_site_net;
+
+  return {
+    aaj_aaya,
+    aaj_kharch,
+    aaj_bacha: aaj_aaya - aaj_kharch,
+    mahine_aaya,
+    mahine_kharch,
+    mahine_bacha: mahine_aaya - mahine_kharch,
+    activeSites,
+    totalWorkers,
+    worker_payment_baki,
+    lena_hai: udhaar.lena_hai,
+    dena_hai: udhaar.dena_hai,
+    haath_mein_rokad
+  };
+}
+
+function toggleAccordion(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.toggle('open');
+  }
+}
+
+function renderApp() {
+  const container = document.getElementById('view-container');
+  if (currentView === 'ghar') renderGhar(container);
+  else if (currentView === 'sites') renderSites(container);
+  else if (currentView === 'site_detail') renderSiteDetail(container, activeSiteId);
+  else if (currentView === 'rozana') renderRozana(container);
+  else if (currentView === 'udhaar') renderUdhaar(container);
+  else if (currentView === 'aur') renderAurMenu(container);
+  else if (currentView === 'workers') renderWorkers(container);
+  else if (currentView === 'worker_detail') renderWorkerDetail(container, activeWorkerId);
+  else if (currentView === 'hajiri') renderFastHajiri(container);
+  else if (currentView === 'report') renderReport(container);
+  else if (currentView === 'setting') renderSetting(container);
+}
+
+function renderGhar(c) {
+  const stats = calculateGharDashboard();
+  const aaj = aajKiTareekh();
+
+  let alerts = [];
+  if (stats.worker_payment_baki > 0) {
+    alerts.push({ text: `मिस्त्री/हेल्पर का कुल ${rupayeFormat(stats.worker_payment_baki)} बकाया है।`, type: 'warning', action: "viewBadlo('workers')" });
+  }
+  if (stats.lena_hai > 0) {
+    alerts.push({ text: `उधार में कुल ${rupayeFormat(stats.lena_hai)} वापस लेना बाकी है।`, type: 'warning', action: "viewBadlo('udhaar')" });
+  }
+  const aajLagayiHajiri = appData.attendance.filter(a => a.tareekh === aaj).length;
+  if (aajLagayiHajiri < appData.workers.length && appData.workers.length > 0) {
+    alerts.push({ text: `आज ${appData.workers.length - aajLagayiHajiri} लोगों की हाजिरी लगानी बाकी है।`, type: 'danger', action: "viewBadlo('hajiri')" });
+  }
+
+  let allRecent = [];
+  appData.site_transactions.forEach(t => {
+    const s = appData.sites.find(site => site.id === t.site_id);
+    allRecent.push({
+      tareekh: t.tareekh,
+      naam: (s ? s.naam : 'साइट') + ' - ' + t.kaam,
+      rakam: t.rakam,
+      prakar: t.prakar,
+      tareeka: t.tareeka,
+      tag: 'साइट हिसाब'
+    });
+  });
+  appData.daily_transactions.forEach(t => {
+    allRecent.push({
+      tareekh: t.tareekh,
+      naam: t.kisliye + ' (' + (t.srot || t.shreni) + ')',
+      rakam: t.rakam,
+      prakar: t.prakar,
+      tareeka: t.tareeka,
+      tag: 'दैनिक'
+    });
+  });
+  appData.worker_payments.forEach(p => {
+    const w = appData.workers.find(wk => wk.id === p.worker_id);
+    allRecent.push({
+      tareekh: p.tareekh,
+      naam: (w ? w.naam : 'मिस्त्री/हेल्पर') + ' - ' + (p.prakar === 'advance' ? 'एडवांस' : 'मजदूरी पेमेंट'),
+      rakam: p.rakam,
+      prakar: 'kharch',
+      tareeka: p.tareeka,
+      tag: 'भुगतान'
+    });
+  });
+
+  allRecent.sort((a, b) => b.tareekh.localeCompare(a.tareekh));
+  const recentDisplay = allRecent.slice(0, 6);
+
+  c.innerHTML = `
+    <div class="smart-alerts-container">
+      ${alerts.map(a => `
+        <div class="smart-alert-card ${a.type}" onclick="${a.action}">
+          <div class="smart-alert-text">🔔 ${a.text}</div>
+          <span style="font-size:12px; font-weight:700;">देखें →</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="quick-action-grid">
+      <div class="action-btn" onclick="paisaAayaModalKholo()">
+        <div class="action-icon green">+</div>
+        <div class="action-label">पैसा आया</div>
+      </div>
+      <div class="action-btn" onclick="kharchaModalKholo()">
+        <div class="action-icon red">-</div>
+        <div class="action-label">खर्चा</div>
+      </div>
+      <div class="action-btn" onclick="viewBadlo('hajiri')">
+        <div class="action-icon blue">📋</div>
+        <div class="action-label">हाजिरी</div>
+      </div>
+      <div class="action-btn" onclick="workerPaymentModalKholo()">
+        <div class="action-icon yellow">💸</div>
+        <div class="action-label">मजदूरी दो</div>
+      </div>
+      <div class="action-btn" onclick="nayiSiteModalKholo()">
+        <div class="action-icon blue">🏗️</div>
+        <div class="action-label">नई साइट</div>
+      </div>
+      <div class="action-btn" onclick="nayaWorkerModalKholo()">
+        <div class="action-icon blue">👷</div>
+        <div class="action-label">मिस्त्री/हेल्पर</div>
+      </div>
+      <div class="action-btn" onclick="udhaarModalKholo('diya')">
+        <div class="action-icon red">🤝</div>
+        <div class="action-label">उधार दिया</div>
+      </div>
+      <div class="action-btn" onclick="udhaarModalKholo('liya')">
+        <div class="action-icon green">🤲</div>
+        <div class="action-label">उधार लिया</div>
+      </div>
+    </div>
+
+    <!-- ACCORDIONS ON HOME -->
+    <div class="accordion-wrapper" id="acc-aaj">
+      <div class="accordion-header" onclick="toggleAccordion('acc-aaj')">
+        <div class="accordion-title">
+          <span>📅 आज का हाल (${tareekhDisplay(aaj)})</span>
+        </div>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="stats-grid">
+          <div class="stat-card income">
+            <div class="stat-label">आज आया</div>
+            <div class="stat-amount pos">${rupayeFormat(stats.aaj_aaya)}</div>
+          </div>
+          <div class="stat-card expense">
+            <div class="stat-label">आज खर्च</div>
+            <div class="stat-amount neg">${rupayeFormat(stats.aaj_kharch)}</div>
+          </div>
+          <div class="stat-card balance">
+            <div class="stat-label">आज की बचत</div>
+            <div class="stat-amount neutral">${rupayeFormat(stats.aaj_bacha)}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">हाथ में कुल रोकड़</div>
+            <div class="stat-amount neutral">${rupayeFormat(stats.haath_mein_rokad)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-wrapper" id="acc-mahina">
+      <div class="accordion-header" onclick="toggleAccordion('acc-mahina')">
+        <div class="accordion-title">
+          <span>📊 इस महीने का हिसाब</span>
+        </div>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="stats-grid">
+          <div class="stat-card income">
+            <div class="stat-label">महीने में आया</div>
+            <div class="stat-amount pos">${rupayeFormat(stats.mahine_aaya)}</div>
+          </div>
+          <div class="stat-card expense">
+            <div class="stat-label">महीने में खर्च</div>
+            <div class="stat-amount neg">${rupayeFormat(stats.mahine_kharch)}</div>
+          </div>
+          <div class="stat-card balance">
+            <div class="stat-label">महीने का बचा</div>
+            <div class="stat-amount neutral">${rupayeFormat(stats.mahine_bacha)}</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-label">मजदूरी बकाया</div>
+            <div class="stat-amount alert">${rupayeFormat(stats.worker_payment_baki)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-wrapper" id="acc-sites">
+      <div class="accordion-header" onclick="toggleAccordion('acc-sites')">
+        <div class="accordion-title">
+          <span>🏢 साइट्स व उधार स्थिति</span>
+        </div>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">चालू साइट्स</div>
+            <div class="stat-amount neutral">${stats.activeSites} साइट्स</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">कुल मिस्त्री/हेल्पर</div>
+            <div class="stat-amount neutral">${stats.totalWorkers} लोग</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">उधार लेना बाकी</div>
+            <div class="stat-amount pos">${rupayeFormat(stats.lena_hai)}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">उधार देना बाकी</div>
+            <div class="stat-amount neg">${rupayeFormat(stats.dena_hai)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-wrapper" id="acc-recent">
+      <div class="accordion-header" onclick="toggleAccordion('acc-recent')">
+        <div class="accordion-title">
+          <span>🕒 हालिया लेनदेन (Recent Entries)</span>
+        </div>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-content" style="padding:10px;">
+        ${recentDisplay.length === 0 ? '<div style="text-align:center; padding:18px; color:var(--text-muted); font-size:13px;">कोई हालिया हिसाब दर्ज नहीं है।</div>' : `
+          <div class="item-list">
+            ${recentDisplay.map(t => `
+              <div class="item-card">
+                <div class="item-left">
+                  <div class="item-title">${t.naam}</div>
+                  <div class="item-desc">
+                    <span>📅 ${tareekhDisplay(t.tareekh)}</span>
+                    <span class="item-badge">${t.tag}</span>
+                    <span class="item-badge ${t.tareeka === 'कैश' ? 'cash' : (t.tareeka === 'UPI' ? 'upi' : 'bank')}">${t.tareeka}</span>
+                  </div>
+                </div>
+                <div class="item-right">
+                  <div class="item-amount ${t.prakar === 'aaya' ? 'green' : 'red'}">
+                    ${t.prakar === 'aaya' ? '+' : '-'}${rupayeFormat(t.rakam)}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function renderSites(c) {
+  c.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+      <h2 style="font-size:18px; font-weight:700;">मेरी साइट्स (Sites)</h2>
+      <button class="btn btn-primary" style="width:auto; padding:8px 14px;" onclick="nayiSiteModalKholo()">+ नई साइट जोड़ें</button>
+    </div>
+
+    <div class="filter-bar">
+      <input type="text" class="search-input" id="site-khoj-input" placeholder="साइट या पार्टी के नाम से खोजें..." onkeyup="siteFilterKarein()">
+    </div>
+
+    <div id="sites-list-container" class="item-list"></div>
+  `;
+  siteFilterKarein();
+}
+
+function siteFilterKarein() {
+  const q = (document.getElementById('site-khoj-input')?.value || '').toLowerCase();
+  const c = document.getElementById('sites-list-container');
+  if (!c) return;
+
+  const filtered = appData.sites.filter(s => 
+    s.naam.toLowerCase().includes(q) || 
+    (s.malik_naam && s.malik_naam.toLowerCase().includes(q)) ||
+    (s.pata && s.pata.toLowerCase().includes(q))
+  );
+
+  if (filtered.length === 0) {
+    c.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); background:var(--card-bg); border-radius:12px; border:1px solid var(--border);">कोई साइट नहीं मिली। नई साइट जोड़ने के लिए ऊपर बटन दबाएं।</div>';
+    return;
+  }
+
+  c.innerHTML = filtered.map(site => {
+    const sum = calculateSiteSummary(site.id);
+    const workerCount = appData.workers.filter(w => w.site_id === site.id || w.site_naam === site.naam).length;
+    const badgeClass = site.sthiti === 'चालू' ? 'active' : (site.sthiti === 'रुकी हुई' ? 'paused' : 'done');
+
+    return `
+      <div class="card" style="cursor:pointer; margin-bottom:12px;" onclick="viewBadlo('site_detail', '${site.id}')">
+        <div class="card-body">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+            <div>
+              <div style="font-size:16px; font-weight:700; color:var(--primary);">${site.naam}</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+                👤 पार्टी: ${site.malik_naam || 'दर्ज नहीं'} | 📞 ${site.mobile || '-'}
+              </div>
+              <div style="font-size:12px; color:var(--text-muted);">
+                📍 ${site.pata || 'लोकेशन दर्ज नहीं'}
+              </div>
+            </div>
+            <span class="item-badge ${badgeClass}">${site.sthiti}</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; background:var(--primary-light); padding:10px; border-radius:8px; margin-top:10px; text-align:center;">
+            <div>
+              <div style="font-size:11px; color:var(--text-muted); font-weight:600;">कुल आया</div>
+              <div style="font-size:14px; font-weight:700; color:var(--success);">${rupayeFormat(sum.kul_aaya)}</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:var(--text-muted); font-weight:600;">कुल खर्च</div>
+              <div style="font-size:14px; font-weight:700; color:var(--danger);">${rupayeFormat(sum.kul_kharch)}</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:var(--text-muted); font-weight:600;">बचा हुआ</div>
+              <div style="font-size:14px; font-weight:700; color:var(--primary);">${rupayeFormat(sum.baki)}</div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:11.5px; color:var(--text-muted);">
+            <span>👷 मिस्त्री/हेल्पर: ${workerCount}</span>
+            <span style="font-weight:700; color:var(--accent);">खाता देखें →</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+let siteTab = 'hisaab';
+
+function renderSiteDetail(c, siteId) {
+  const site = appData.sites.find(s => s.id === siteId);
+  if (!site) {
+    c.innerHTML = '<div style="padding:20px;">साइट नहीं मिली। <button onclick="viewBadlo(\'sites\')">वापस जाएं</button></div>';
+    return;
+  }
+
+  const sum = calculateSiteSummary(siteId);
+
+  c.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+      <button class="btn-tiny" onclick="viewBadlo('sites')">← सभी साइट्स</button>
+      <div style="display:flex; gap:6px;">
+        <button class="btn-tiny edit" onclick="siteEditModalKholo('${site.id}')">बदलें</button>
+        <button class="btn-tiny delete" onclick="siteMitayein('${site.id}')">मिटाएं</button>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg, #1e3a8a, #0369a1); color:#fff;">
+      <div class="card-body">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <h1 style="font-size:20px; font-weight:700; margin-bottom:4px;">${site.naam}</h1>
+            <div style="font-size:13px; opacity:0.9;">पार्टी: ${site.malik_naam || '-'} | 📞 ${site.mobile || '-'}</div>
+            <div style="font-size:12px; opacity:0.8; margin-top:2px;">📍 ${site.pata || ''}</div>
+          </div>
+          <span style="background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:12px; font-size:11.5px; font-weight:600;">
+            ${site.sthiti}
+          </span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:16px; background:rgba(255,255,255,0.1); padding:12px; border-radius:10px;">
+          <div>
+            <div style="font-size:11px; opacity:0.85;">कुल पैसा आया:</div>
+            <div style="font-size:18px; font-weight:700; color:#86efac;">${rupayeFormat(sum.kul_aaya)}</div>
+          </div>
+          <div>
+            <div style="font-size:11px; opacity:0.85;">सामान व अन्य खर्च:</div>
+            <div style="font-size:18px; font-weight:700; color:#fca5a5;">${rupayeFormat(sum.direct_kharch)}</div>
+          </div>
+          <div>
+            <div style="font-size:11px; opacity:0.85;">मिस्त्री/हेल्पर भुगतान:</div>
+            <div style="font-size:18px; font-weight:700; color:#fed7aa;">${rupayeFormat(sum.worker_payment)}</div>
+          </div>
+          <div>
+            <div style="font-size:11px; opacity:0.85;">बचा हुआ बाकी:</div>
+            <div style="font-size:18px; font-weight:700; color:#fff;">${rupayeFormat(sum.baki)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+      <button class="btn btn-success" onclick="siteTransactionModalKholo('${site.id}', 'aaya')">+ पैसा आया</button>
+      <button class="btn btn-danger" onclick="siteTransactionModalKholo('${site.id}', 'kharch')">- खर्चा जोड़ें</button>
+    </div>
+
+    <div class="tab-row">
+      <button class="tab-btn ${siteTab === 'hisaab' ? 'active' : ''}" onclick="siteTabBadlo('${site.id}', 'hisaab')">खाता बही (Transactions)</button>
+      <button class="tab-btn ${siteTab === 'ladke' ? 'active' : ''}" onclick="siteTabBadlo('${site.id}', 'ladke')">मिस्त्री व हेल्पर</button>
+      <button class="tab-btn ${siteTab === 'report' ? 'active' : ''}" onclick="siteTabBadlo('${site.id}', 'report')">साइट रिपोर्ट</button>
+    </div>
+
+    <div id="site-tab-content"></div>
+  `;
+
+  renderSiteTabBody(siteId);
+}
+
+function siteTabBadlo(siteId, tab) {
+  siteTab = tab;
+  renderSiteDetail(document.getElementById('view-container'), siteId);
+}
+
+function renderSiteTabBody(siteId) {
+  const c = document.getElementById('site-tab-content');
+  if (!c) return;
+
+  if (siteTab === 'hisaab') {
+    c.innerHTML = `
+      <div class="filter-bar">
+        <select class="form-control" style="width:auto;" id="site-tx-filter-type" onchange="renderSiteTransactionsFiltered('${siteId}')">
+          <option value="sab">सभी (आया व खर्च)</option>
+          <option value="aaya">सिर्फ पैसा आया</option>
+          <option value="kharch">सिर्फ खर्चा</option>
+        </select>
+        <select class="form-control" style="width:auto;" id="site-tx-filter-method" onchange="renderSiteTransactionsFiltered('${siteId}')">
+          <option value="sab">सभी माध्यम (Cash/UPI/Bank)</option>
+          <option value="कैश">कैश</option>
+          <option value="UPI">UPI</option>
+          <option value="बैंक">बैंक</option>
+        </select>
+      </div>
+
+      <div id="site-tx-list" class="item-list"></div>
+    `;
+    renderSiteTransactionsFiltered(siteId);
+  } else if (siteTab === 'ladke') {
+    const site = appData.sites.find(s => s.id === siteId);
+    const siteWorkers = appData.workers.filter(w => w.site_id === siteId || (site && w.site_naam === site.naam));
+    c.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="font-size:14px; font-weight:700;">इस साइट पर लगे मिस्त्री/हेल्पर (${siteWorkers.length})</div>
+        <button class="btn btn-primary" style="width:auto; padding:6px 12px; font-size:12px;" onclick="nayaWorkerModalKholo('${site ? site.naam : ''}')">+ मिस्त्री/हेल्पर जोड़ें</button>
+      </div>
+
+      <div class="item-list">
+        ${siteWorkers.length === 0 ? '<div style="text-align:center; padding:20px; color:var(--text-muted);">इस साइट पर कोई मिस्त्री/हेल्पर नहीं जुड़ा है।</div>' : siteWorkers.map(w => {
+          const wsum = calculateWorkerSummary(w.id);
+          return `
+            <div class="item-card" onclick="viewBadlo('worker_detail', '${w.id}')" style="cursor:pointer;">
+              <div class="item-left">
+                <div class="item-title">${w.naam} <span style="font-size:12px; color:var(--text-muted);">(${w.kaam})</span></div>
+                <div class="item-desc">
+                  <span>हाजिरी: ${wsum.hazir} दिन</span>
+                  <span>रेट: ₹${w.rate}/दिन</span>
+                </div>
+              </div>
+              <div class="item-right">
+                <div style="font-size:11px; color:var(--text-muted);">बकाया:</div>
+                <div class="item-amount ${wsum.baki > 0 ? 'red' : 'green'}">${rupayeFormat(wsum.baki)}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  } else if (siteTab === 'report') {
+    const site = appData.sites.find(s => s.id === siteId);
+    const sum = calculateSiteSummary(siteId);
+    const siteWorkers = appData.workers.filter(w => w.site_id === siteId || (site && w.site_naam === site.naam));
+    c.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">साइट सम्पूर्ण रिपोर्ट</div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-tiny" onclick="window.print()">🖨️ Print</button>
+            <button class="btn-tiny" style="color:#25d366;" onclick="siteReportWhatsApp('${siteId}')">💬 WhatsApp</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="data-table">
+            <tr><th>विवरण</th><th style="text-align:right;">रकम</th></tr>
+            <tr><td>शुरू का बैलेंस</td><td style="text-align:right;">${rupayeFormat(sum.shuru_baki)}</td></tr>
+            <tr><td>पार्टी से कुल पैसा आया</td><td style="text-align:right; color:var(--success); font-weight:700;">+${rupayeFormat(sum.kul_aaya)}</td></tr>
+            <tr><td>सामान व अन्य सीधा खर्चा</td><td style="text-align:right; color:var(--danger); font-weight:700;">-${rupayeFormat(sum.direct_kharch)}</td></tr>
+            <tr><td>मिस्त्री व हेल्पर का भुगतान</td><td style="text-align:right; color:var(--danger); font-weight:700;">-${rupayeFormat(sum.worker_payment)}</td></tr>
+            <tr style="background:var(--primary-light); font-weight:700;">
+              <td>बचा हुआ कुल पैसा (साइट बैलेंस)</td>
+              <td style="text-align:right; color:var(--primary); font-size:16px;">${rupayeFormat(sum.baki)}</td>
+            </tr>
+          </table>
+
+          <div style="margin-top:16px; font-weight:700; font-size:14px;">मिस्त्री/हेल्पर स्थिति:</div>
+          <div class="table-responsive" style="margin-top:8px;">
+            <table class="data-table">
+              <tr>
+                <th>नाम</th>
+                <th>हाजिर</th>
+                <th>कमाई</th>
+                <th>दिया</th>
+                <th>बकाया</th>
+              </tr>
+              ${siteWorkers.map(w => {
+                const ws = calculateWorkerSummary(w.id);
+                return `
+                  <tr>
+                    <td>${w.naam}</td>
+                    <td>${ws.hazir} दिन</td>
+                    <td>${rupayeFormat(ws.kul_kamai)}</td>
+                    <td>${rupayeFormat(ws.kul_diya)}</td>
+                    <td style="font-weight:700; color:${ws.baki > 0 ? 'var(--danger)' : 'var(--success)'};">${rupayeFormat(ws.baki)}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function siteReportWhatsApp(siteId) {
+  const site = appData.sites.find(s => s.id === siteId);
+  if (!site) return;
+  const sum = calculateSiteSummary(siteId);
+  const msg = "*Jaipur Door Solutions - साइट हिसाब*\n" +
+              "साइट: " + site.naam + "\n" +
+              "पार्टी: " + (site.malik_naam || '-') + "\n" +
+              "कुल आया: " + rupayeFormat(sum.kul_aaya) + "\n" +
+              "सामान खर्च: " + rupayeFormat(sum.direct_kharch) + "\n" +
+              "लेबर भुगतान: " + rupayeFormat(sum.worker_payment) + "\n" +
+              "*कुल बचा बैलेंस: " + rupayeFormat(sum.baki) + "*\n\n" +
+              "www.jaipurdoorsolutions.com";
+  window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
+}
+
+function renderSiteTransactionsFiltered(siteId) {
+  const typeFilter = document.getElementById('site-tx-filter-type')?.value || 'sab';
+  const methodFilter = document.getElementById('site-tx-filter-method')?.value || 'sab';
+  const c = document.getElementById('site-tx-list');
+  if (!c) return;
+
+  let list = appData.site_transactions.filter(t => t.site_id === siteId);
+  if (typeFilter !== 'sab') list = list.filter(t => t.prakar === typeFilter);
+  if (methodFilter !== 'sab') list = list.filter(t => t.tareeka === methodFilter);
+
+  list.sort((a, b) => b.tareekh.localeCompare(a.tareekh));
+
+  if (list.length === 0) {
+    c.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">कोई रिकॉर्ड नहीं मिला।</div>';
+    return;
+  }
+
+  c.innerHTML = list.map(t => `
+    <div class="item-card">
+      <div class="item-left">
+        <div class="item-title">${t.kaam}</div>
+        <div class="item-desc">
+          <span>📅 ${tareekhDisplay(t.tareekh)}</span>
+          <span class="item-badge">${t.shreni || 'सामान्य'}</span>
+          <span class="item-badge ${t.tareeka === 'कैश' ? 'cash' : (t.tareeka === 'UPI' ? 'upi' : 'bank')}">${t.tareeka}</span>
+          ${t.remarks ? `<span style="font-style:italic;">💬 ${t.remarks}</span>` : ''}
+        </div>
+      </div>
+      <div class="item-right">
+        <div class="item-amount ${t.prakar === 'aaya' ? 'green' : 'red'}">
+          ${t.prakar === 'aaya' ? '+' : '-'}${rupayeFormat(t.rakam)}
+        </div>
+        <div class="item-actions">
+          <button class="btn-tiny delete" onclick="siteTransactionMitayein('${t.id}', '${siteId}')">मिटाएं</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderRozana(c) {
+  const aaj = aajKiTareekh();
+  const currMonth = aaj.substring(0, 7);
+
+  let mAaya = 0;
+  let mKharch = 0;
+  appData.daily_transactions.filter(t => t.tareekh && t.tareekh.startsWith(currMonth)).forEach(t => {
+    if (t.prakar === 'aaya') mAaya += Number(t.rakam) || 0;
+    if (t.prakar === 'kharch') mKharch += Number(t.rakam) || 0;
+  });
+
+  const mBacha = mAaya - mKharch;
+
+  c.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+      <h2 style="font-size:18px; font-weight:700;">Daily Khata (दैनिक हिसाब)</h2>
+      <div style="display:flex; gap:6px;">
+        <button class="btn btn-success" style="width:auto; padding:6px 12px; font-size:12px;" onclick="dailyTransactionModalKholo('aaya')">+ आया</button>
+        <button class="btn btn-danger" style="width:auto; padding:6px 12px; font-size:12px;" onclick="dailyTransactionModalKholo('kharch')">- खर्च</button>
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--primary-light);">
+      <div class="card-body" style="padding:12px 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-size:13px; font-weight:700;">मासिक सारांश:</span>
+          <input type="month" id="rozana-month-select" class="form-control" style="width:auto; padding:4px 8px; font-size:12px;" value="${currMonth}" onchange="rozanaMonthBadlo(this.value)">
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; text-align:center;">
+          <div>
+            <div style="font-size:11px; color:var(--text-muted);">कुल आया</div>
+            <div id="rozana-m-aaya" style="font-size:15px; font-weight:700; color:var(--success);">${rupayeFormat(mAaya)}</div>
+          </div>
+          <div>
+            <div style="font-size:11px; color:var(--text-muted);">कुल खर्च</div>
+            <div id="rozana-m-kharch" style="font-size:15px; font-weight:700; color:var(--danger);">${rupayeFormat(mKharch)}</div>
+          </div>
+          <div>
+            <div style="font-size:11px; color:var(--text-muted);">बचत</div>
+            <div id="rozana-m-bacha" style="font-size:15px; font-weight:700; color:var(--primary);">${rupayeFormat(mBacha)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <select class="form-control" style="width:auto;" id="daily-filter-type" onchange="renderDailyListFiltered()">
+        <option value="sab">सभी लेनदेन</option>
+        <option value="aaya">सिर्फ आया पैसा</option>
+        <option value="kharch">सिर्फ खर्च</option>
+      </select>
+      <input type="text" class="search-input" id="daily-search-input" placeholder="कारण या श्रेणी से खोजें..." onkeyup="renderDailyListFiltered()">
+    </div>
+
+    <div id="daily-transactions-list" class="item-list"></div>
+  `;
+
+  renderDailyListFiltered();
+}
+
+function rozanaMonthBadlo(selectedMonth) {
+  let mAaya = 0;
+  let mKharch = 0;
+  appData.daily_transactions.filter(t => t.tareekh && t.tareekh.startsWith(selectedMonth)).forEach(t => {
+    if (t.prakar === 'aaya') mAaya += Number(t.rakam) || 0;
+    if (t.prakar === 'kharch') mKharch += Number(t.rakam) || 0;
+  });
+
+  document.getElementById('rozana-m-aaya').textContent = rupayeFormat(mAaya);
+  document.getElementById('rozana-m-kharch').textContent = rupayeFormat(mKharch);
+  document.getElementById('rozana-m-bacha').textContent = rupayeFormat(mAaya - mKharch);
+  renderDailyListFiltered(selectedMonth);
+}
+
+function renderDailyListFiltered(specificMonth = null) {
+  const c = document.getElementById('daily-transactions-list');
+  if (!c) return;
+
+  const type = document.getElementById('daily-filter-type')?.value || 'sab';
+  const q = (document.getElementById('daily-search-input')?.value || '').toLowerCase();
+  const m = specificMonth || document.getElementById('rozana-month-select')?.value;
+
+  let list = appData.daily_transactions;
+  if (m) list = list.filter(t => t.tareekh && t.tareekh.startsWith(m));
+  if (type !== 'sab') list = list.filter(t => t.prakar === type);
+  if (q) {
+    list = list.filter(t => 
+      (t.kisliye && t.kisliye.toLowerCase().includes(q)) ||
+      (t.shreni && t.shreni.toLowerCase().includes(q)) ||
+      (t.srot && t.srot.toLowerCase().includes(q)) ||
+      (t.remarks && t.remarks.toLowerCase().includes(q))
+    );
+  }
+
+  list.sort((a, b) => b.tareekh.localeCompare(a.tareekh));
+
+  if (list.length === 0) {
+    c.innerHTML = '<div style="text-align:center; padding:24px; color:var(--text-muted);">कोई दैनिक लेनदेन नहीं मिला।</div>';
+    return;
+  }
+
+  c.innerHTML = list.map(t => `
+    <div class="item-card">
+      <div class="item-left">
+        <div class="item-title">${t.kisliye}</div>
+        <div class="item-desc">
+          <span>📅 ${tareekhDisplay(t.tareekh)}</span>
+          <span class="item-badge">${t.shreni || t.srot || 'सामान्य'}</span>
+          <span class="item-badge ${t.tareeka === 'कैश' ? 'cash' : (t.tareeka === 'UPI' ? 'upi' : 'bank')}">${t.tareeka}</span>
+          ${t.remarks ? `<span>💬 ${t.remarks}</span>` : ''}
+        </div>
+      </div>
+      <div class="item-right">
+        <div class="item-amount ${t.prakar === 'aaya' ? 'green' : 'red'}">
+          ${t.prakar === 'aaya' ? '+' : '-'}${rupayeFormat(t.rakam)}
+        </div>
+        <div class="item-actions">
+          <button class="btn-tiny delete" onclick="dailyTransactionMitayein('${t.id}')">मिटाएं</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+let udhaarSubTab = 'diya';
+
+function renderUdhaar(c) {
+  const sum = calculateUdhaarSummary();
+
+  c.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+      <h2 style="font-size:18px; font-weight:700;">Udhaar Khata (उधार)</h2>
+      <button class="btn btn-primary" style="width:auto; padding:6px 12px; font-size:12px;" onclick="udhaarNayaModalKholo()">+ नया उधार जोड़ें</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card" style="cursor:pointer;" onclick="udhaarSubTabBadlo('diya')">
+        <div class="stat-label">मुझे वापस लेना है (उधार दिया)</div>
+        <div class="stat-amount pos">${rupayeFormat(sum.lena_hai)}</div>
+        <div class="stat-sub">कुल दिया: ${rupayeFormat(sum.kul_diya)}</div>
+      </div>
+      <div class="stat-card" style="cursor:pointer;" onclick="udhaarSubTabBadlo('liya')">
+        <div class="stat-label">मुझे वापस देना है (उधार लिया)</div>
+        <div class="stat-amount neg">${rupayeFormat(sum.dena_hai)}</div>
+        <div class="stat-sub">कुल लिया: ${rupayeFormat(sum.kul_liya)}</div>
+      </div>
+    </div>
+
+    <div class="tab-row" style="margin-top:14px;">
+      <button class="tab-btn ${udhaarSubTab === 'diya' ? 'active' : ''}" onclick="udhaarSubTabBadlo('diya')">
+        मैंने उधार दिया (लेना है)
+      </button>
+      <button class="tab-btn ${udhaarSubTab === 'liya' ? 'active' : ''}" onclick="udhaarSubTabBadlo('liya')">
+        मैंने उधार लिया (देना है)
+      </button>
+    </div>
+
+    <div id="udhaar-list-container" class="item-list"></div>
+  `;
+
+  renderUdhaarList();
+}
+
+function udhaarSubTabBadlo(tab) {
+  udhaarSubTab = tab;
+  renderUdhaar(document.getElementById('view-container'));
+}
+
+function renderUdhaarList() {
+  const c = document.getElementById('udhaar-list-container');
+  if (!c) return;
+
+  const list = appData.loans.filter(l => l.disha === udhaarSubTab);
+  list.sort((a, b) => b.tareekh.localeCompare(a.tareekh));
+
+  if (list.length === 0) {
+    c.innerHTML = '<div style="text-align:center; padding:24px; color:var(--text-muted);">इस सेक्शन में कोई उधार दर्ज नहीं है।</div>';
+    return;
+  }
+
+  c.innerHTML = list.map(loan => {
+    const repayments = appData.loan_repayments.filter(r => r.loan_id === loan.id);
+    const wapasAaya = repayments.reduce((s, r) => s + (Number(r.rakam) || 0), 0);
+    const mool = Number(loan.rakam) || 0;
+    const baki = mool - wapasAaya;
+
+    let sthitiBadge = '';
+    if (baki <= 0) sthitiBadge = '<span class="item-badge done">पूरा चुकता</span>';
+    else if (wapasAaya > 0) sthitiBadge = '<span class="item-badge active">कुछ वापस मिला</span>';
+    else sthitiBadge = '<span class="item-badge paused">बाकी है</span>';
+
+    return `
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-body">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="font-size:15px; font-weight:700;">${loan.aadmi_naam}</div>
+              <div style="font-size:12px; color:var(--text-muted);">📞 ${loan.mobile || '-'} | 📅 तारीख: ${tareekhDisplay(loan.tareekh)}</div>
+              ${loan.wapas_tareekh ? `<div style="font-size:11.5px; color:var(--warning); font-weight:600;">⏰ वापसी वादा: ${tareekhDisplay(loan.wapas_tareekh)}</div>` : ''}
+              ${loan.kisliye ? `<div style="font-size:12px; color:var(--text-muted); margin-top:2px;">वजह: ${loan.kisliye}</div>` : ''}
+            </div>
+            ${sthitiBadge}
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; background:var(--primary-light); padding:10px; border-radius:8px; margin-top:10px; text-align:center;">
+            <div>
+              <div style="font-size:10.5px; color:var(--text-muted);">मूल उधार</div>
+              <div style="font-size:13.5px; font-weight:700;">${rupayeFormat(mool)}</div>
+            </div>
+            <div>
+              <div style="font-size:10.5px; color:var(--text-muted);">वापस हुआ</div>
+              <div style="font-size:13.5px; font-weight:700; color:var(--success);">${rupayeFormat(wapasAaya)}</div>
+            </div>
+            <div>
+              <div style="font-size:10.5px; color:var(--text-muted);">बचा बाकी</div>
+              <div style="font-size:13.5px; font-weight:700; color:${baki > 0 ? 'var(--danger)' : 'var(--success)'};">${rupayeFormat(baki)}</div>
+            </div>
+          </div>
+
+          ${repayments.length > 0 ? `
+            <div style="margin-top:10px; border-top:1px dashed var(--border); padding-top:8px;">
+              <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">वापसी का इतिहास:</div>
+              ${repayments.map(r => `
+                <div style="display:flex; justify-content:space-between; font-size:11.5px; padding:2px 0;">
+                  <span>📅 ${tareekhDisplay(r.tareekh)} (${r.tareeka}) ${r.remarks ? '- ' + r.remarks : ''}</span>
+                  <span style="font-weight:600; color:var(--success);">${rupayeFormat(r.rakam)}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+            ${baki > 0 ? `
+              <button class="btn btn-success" style="width:auto; padding:6px 12px; font-size:12px;" onclick="udhaarRepaymentModalKholo('${loan.id}', ${baki}, '${loan.disha}')">
+                ${loan.disha === 'diya' ? '+ वापस मिला दर्ज करें' : '+ भुगतान किया दर्ज करें'}
+              </button>
+            ` : '<span></span>'}
+            <div style="display:flex; gap:6px;">
+              <button class="btn-tiny delete" onclick="udhaarMitayein('${loan.id}')">मिटाएं</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderAurMenu(c) {
+  c.innerHTML = `
+    <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">More (अतिरिक्त मेन्यू)</h2>
+
+    <div class="item-list">
+      <div class="item-card" onclick="viewBadlo('workers')" style="cursor:pointer;">
+        <div class="item-left">
+          <div class="item-title">👷 मिस्त्री व हेल्पर (Workers)</div>
+          <div class="item-desc">मिस्त्री, हेल्पर लिस्ट, मजदूरी रेट और बकाया खाता</div>
+        </div>
+        <div class="item-right">➔</div>
+      </div>
+
+      <div class="item-card" onclick="viewBadlo('hajiri')" style="cursor:pointer;">
+        <div class="item-left">
+          <div class="item-title">📋 1-Click हाजिरी (Attendance)</div>
+          <div class="item-desc">रोज़ की हाजिरी व ओवरटाइम तेजी से दर्ज करें</div>
+        </div>
+        <div class="item-right">➔</div>
+      </div>
+
+      <div class="item-card" onclick="workerPaymentModalKholo()" style="cursor:pointer;">
+        <div class="item-left">
+          <div class="item-title">💸 मिस्त्री / हेल्पर को पेमेंट दें</div>
+          <div class="item-desc">मजदूरी या एडवांस भुगतान दर्ज करें</div>
+        </div>
+        <div class="item-right">➔</div>
+      </div>
+
+      <div class="item-card" onclick="viewBadlo('report')" style="cursor:pointer;">
+        <div class="item-left">
+          <div class="item-title">📊 हिसाब रिपोर्ट, PDF व WhatsApp शेयर</div>
+          <div class="item-desc">PDF, प्रिंट, CSV व टेक्स्ट मैसेज में शेयर करें</div>
+        </div>
+        <div class="item-right">➔</div>
+      </div>
+
+      <div class="item-card" onclick="viewBadlo('setting')" style="cursor:pointer;">
+        <div class="item-left">
+          <div class="item-title">⚙️ बैकअप, रिस्टोर व सेटिंग्स</div>
+          <div class="item-desc">Firebase Cloud सिंक, सुरक्षा PIN व बैकअप फाइल</div>
+        </div>
+        <div class="item-right">➔</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderWorkers(c) {
+  c.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+      <h2 style="font-size:18px; font-weight:700;">मिस्त्री व हेल्पर लिस्ट</h2>
+      <button class="btn btn-primary" style="width:auto; padding:6px 12px; font-size:12px;" onclick="nayaWorkerModalKholo()">+ मिस्त्री/हेल्पर जोड़ें</button>
+    </div>
+
+    <div class="filter-bar">
+      <input type="text" class="search-input" id="worker-search-input" placeholder="नाम, काम या साइट से खोजें..." onkeyup="workerFilterKarein()">
+    </div>
+
+    <div id="workers-list-container" class="item-list"></div>
+  `;
+  workerFilterKarein();
+}
+
+function workerFilterKarein() {
+  const q = (document.getElementById('worker-search-input')?.value || '').toLowerCase();
+  const c = document.getElementById('workers-list-container');
+  if (!c) return;
+
+  const filtered = appData.workers.filter(w => 
+    w.naam.toLowerCase().includes(q) || 
+    (w.kaam && w.kaam.toLowerCase().includes(q)) ||
+    (w.site_naam && w.site_naam.toLowerCase().includes(q))
+  );
+
+  if (filtered.length === 0) {
+    c.innerHTML = '<div style="text-align:center; padding:24px; color:var(--text-muted);">कोई मिस्त्री या हेल्पर नहीं मिला।</div>';
+    return;
+  }
+
+  c.innerHTML = filtered.map(w => {
+    const s = calculateWorkerSummary(w.id);
+    return `
+      <div class="item-card" onclick="viewBadlo('worker_detail', '${w.id}')" style="cursor:pointer;">
+        <div class="item-left">
+          <div class="item-title">${w.naam} <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">(${w.kaam || 'मिस्त्री'})</span></div>
+          <div class="item-desc">
+            <span>📍 साइट: ${w.site_naam || 'सामान्य'}</span>
+            <span>रेट: ₹${w.rate}/दिन</span>
+            <span>हाजिर: ${s.hazir} दिन</span>
+          </div>
+        </div>
+        <div class="item-right">
+          <div style="font-size:11px; color:var(--text-muted);">बकाया:</div>
+          <div class="item-amount ${s.baki > 0 ? 'red' : 'green'}">${rupayeFormat(s.baki)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderWorkerDetail(c, workerId) {
+  const worker = appData.workers.find(w => w.id === workerId);
+  if (!worker) {
+    c.innerHTML = '<div>रिकॉर्ड नहीं मिला। <button onclick="viewBadlo(\'workers\')">वापस</button></div>';
+    return;
+  }
+
+  const s = calculateWorkerSummary(workerId);
+  const attHistory = appData.attendance.filter(a => a.worker_id === workerId).sort((a, b) => b.tareekh.localeCompare(a.tareekh));
+  const payHistory = appData.worker_payments.filter(p => p.worker_id === workerId).sort((a, b) => b.tareekh.localeCompare(a.tareekh));
+
+  c.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <button class="btn-tiny" onclick="viewBadlo('workers')">← सभी लिस्ट</button>
+      <div style="display:flex; gap:6px;">
+        <button class="btn-tiny edit" onclick="workerEditModalKholo('${worker.id}')">बदलें</button>
+        <button class="btn-tiny delete" onclick="workerMitayein('${worker.id}')">हटाएं</button>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg, #1e3a8a, #0f766e); color:#fff;">
+      <div class="card-body">
+        <h1 style="font-size:20px; font-weight:700;">${worker.naam}</h1>
+        <div style="font-size:13px; opacity:0.9;">काम: ${worker.kaam || 'मिस्त्री'} | 📞 ${worker.mobile || 'नंबर नहीं है'}</div>
+        <div style="font-size:12px; opacity:0.85; margin-top:2px;">साइट: ${worker.site_naam || 'सामान्य'}</div>
+
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin-top:14px; background:rgba(255,255,255,0.12); padding:10px; border-radius:8px; text-align:center;">
+          <div>
+            <div style="font-size:10.5px; opacity:0.85;">कुल कमाई</div>
+            <div style="font-size:15px; font-weight:700; color:#86efac;">${rupayeFormat(s.kul_kamai)}</div>
+          </div>
+          <div>
+            <div style="font-size:10.5px; opacity:0.85;">कुल दिया</div>
+            <div style="font-size:15px; font-weight:700; color:#fef08a;">${rupayeFormat(s.kul_diya)}</div>
+          </div>
+          <div>
+            <div style="font-size:10.5px; opacity:0.85;">बकाया बैलेंस</div>
+            <div style="font-size:15px; font-weight:700; color:#fff;">${rupayeFormat(s.baki)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-bottom:14px;">
+      <button class="btn btn-success" onclick="workerPaymentModalKholo('${worker.id}')">💸 पेमेंट / एडवांस दें</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">हाजिरी सारांश</div></div>
+      <div class="card-body">
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; text-align:center;">
+          <div style="background:var(--success-light); padding:8px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--success); font-weight:600;">हाजिर</div>
+            <div style="font-size:16px; font-weight:700; color:var(--success);">${s.hazir} दिन</div>
+          </div>
+          <div style="background:var(--warning-light); padding:8px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--warning); font-weight:600;">आधा दिन</div>
+            <div style="font-size:16px; font-weight:700; color:var(--warning);">${s.aadha} दिन</div>
+          </div>
+          <div style="background:var(--danger-light); padding:8px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--danger); font-weight:600;">गैरहाजिर</div>
+            <div style="font-size:16px; font-weight:700; color:var(--danger);">${s.gair_hazir} दिन</div>
+          </div>
+          <div style="background:var(--primary-light); padding:8px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--primary); font-weight:600;">ओवरटाइम</div>
+            <div style="font-size:16px; font-weight:700; color:var(--primary);">${s.overtime_hours} घंटे</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">भुगतान का इतिहास (Payment History)</div></div>
+      <div class="card-body" style="padding:10px;">
+        ${payHistory.length === 0 ? '<div style="text-align:center; padding:12px; color:var(--text-muted);">कोई पेमेंट रिकॉर्ड नहीं है।</div>' : `
+          <div class="item-list">
+            ${payHistory.map(p => `
+              <div class="item-card">
+                <div class="item-left">
+                  <div class="item-title">${p.prakar === 'advance' ? 'एडवांस भुगतान' : 'मजदूरी पेमेंट'}</div>
+                  <div class="item-desc">
+                    <span>📅 ${tareekhDisplay(p.tareekh)}</span>
+                    <span class="item-badge">${p.tareeka}</span>
+                    ${p.remarks ? `<span>💬 ${p.remarks}</span>` : ''}
+                  </div>
+                </div>
+                <div class="item-right">
+                  <div class="item-amount red">${rupayeFormat(p.rakam)}</div>
+                  <button class="btn-tiny delete" style="margin-top:4px;" onclick="workerPaymentMitayein('${p.id}', '${worker.id}')">हटाएं</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">हाजिरी का इतिहास (Attendance Record)</div></div>
+      <div class="card-body" style="padding:10px;">
+        ${attHistory.length === 0 ? '<div style="text-align:center; padding:12px; color:var(--text-muted);">कोई हाजिरी दर्ज नहीं है।</div>' : `
+          <div class="item-list">
+            ${attHistory.map(a => `
+              <div class="item-card">
+                <div class="item-left">
+                  <div class="item-title">📅 ${tareekhDisplay(a.tareekh)}</div>
+                  <div class="item-desc">
+                    ${a.overtime_ghante > 0 ? `<span>⏱️ ओवरटाइम: ${a.overtime_ghante} घंटे</span>` : ''}
+                    ${a.remarks ? `<span>💬 ${a.remarks}</span>` : ''}
+                  </div>
+                </div>
+                <div class="item-right">
+                  <span class="item-badge ${a.sthiti === 'hazir' ? 'active' : (a.sthiti === 'aadha' ? 'paused' : 'done')}">
+                    ${a.sthiti === 'hazir' ? 'हाजिर' : (a.sthiti === 'aadha' ? 'आधा दिन' : (a.sthiti === 'gair_hazir' ? 'गैरहाजिर' : 'छुट्टी'))}
+                  </span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function renderFastHajiri(c) {
+  const aaj = aajKiTareekh();
+
+  c.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="font-size:18px; font-weight:700;">रोज़ाना हाजिरी (Attendance)</h2>
+      <button class="btn-tiny" onclick="viewBadlo('ghar')">← वापस</button>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="form-row" style="align-items:center;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">तारीख चुनें:</label>
+            <input type="date" id="hajiri-date-input" class="form-control" value="${aaj}" onchange="loadHajiriForDate(this.value)">
+          </div>
+          <div style="display:flex; align-items:flex-end;">
+            <button class="btn btn-success" style="height:40px;" onclick="sabkoHazirLagao()">✅ सबको हाजिर लगाओ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="hajiri-worker-list" class="item-list" style="margin-top:14px;"></div>
+  `;
+
+  loadHajiriForDate(aaj);
+}
+
+function loadHajiriForDate(dateStr) {
+  const c = document.getElementById('hajiri-worker-list');
+  if (!c) return;
+
+  if (appData.workers.length === 0) {
+    c.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);">कोई मिस्त्री या हेल्पर नहीं जुड़ा है। पहले जोड़ें।</div>';
+    return;
+  }
+
+  c.innerHTML = appData.workers.map(w => {
+    const existing = appData.attendance.find(a => a.worker_id === w.id && a.tareekh === dateStr);
+    const currStatus = existing ? existing.sthiti : 'not_set';
+    const currOt = existing ? (existing.overtime_ghante || 0) : 0;
+
+    return `
+      <div class="item-card" style="flex-direction:column; align-items:stretch; gap:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:15px; font-weight:700;">${w.naam}</div>
+            <div style="font-size:12px; color:var(--text-muted);">${w.kaam || 'मिस्त्री'} | रेट: ₹${w.rate}/दिन | साइट: ${w.site_naam || 'सामान्य'}</div>
+          </div>
+          <div>
+            ${existing ? `<span style="font-size:11px; color:var(--success); font-weight:600;">दर्ज है</span>` : `<span style="font-size:11px; color:var(--warning); font-weight:600;">बाकी</span>`}
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px;">
+          <button class="btn ${currStatus === 'hazir' ? 'btn-success' : 'btn-secondary'}" style="padding:6px; font-size:12px;" onclick="quickHajiriSet('${w.id}', '${dateStr}', 'hazir')">हाजिर</button>
+          <button class="btn ${currStatus === 'aadha' ? 'btn-primary' : 'btn-secondary'}" style="padding:6px; font-size:12px;" onclick="quickHajiriSet('${w.id}', '${dateStr}', 'aadha')">आधा दिन</button>
+          <button class="btn ${currStatus === 'gair_hazir' ? 'btn-danger' : 'btn-secondary'}" style="padding:6px; font-size:12px;" onclick="quickHajiriSet('${w.id}', '${dateStr}', 'gair_hazir')">गैरहाजिर</button>
+          <button class="btn btn-secondary" style="padding:6px; font-size:12px; background:${currStatus === 'chhutti' ? '#94a3b8' : ''}; color:${currStatus === 'chhutti' ? '#fff' : ''};" onclick="quickHajiriSet('${w.id}', '${dateStr}', 'chhutti')">छुट्टी</button>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px; font-size:12px;">
+          <span>ओवरटाइम (घंटे):</span>
+          <input type="number" step="0.5" style="width:70px; padding:4px 8px; border:1px solid var(--border); border-radius:6px; font-size:12px;" value="${currOt}" onchange="quickOvertimeSet('${w.id}', '${dateStr}', this.value)">
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function quickHajiriSet(workerId, dateStr, status) {
+  let item = appData.attendance.find(a => a.worker_id === workerId && a.tareekh === dateStr);
+  if (item) {
+    item.sthiti = status;
+  } else {
+    item = {
+      id: 'att_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+      worker_id: workerId,
+      tareekh: dateStr,
+      sthiti: status,
+      overtime_ghante: 0,
+      remarks: ''
+    };
+    appData.attendance.push(item);
+  }
+  dataMehfoozKarein();
+  activityJodein('हाजिरी बदली', `${tareekhDisplay(dateStr)}: ${status}`);
+  toastDikhaye('हाजिरी दर्ज हो गई!');
+  loadHajiriForDate(dateStr);
+}
+
+function quickOvertimeSet(workerId, dateStr, hours) {
+  let item = appData.attendance.find(a => a.worker_id === workerId && a.tareekh === dateStr);
+  if (!item) {
+    item = {
+      id: 'att_' + Date.now(),
+      worker_id: workerId,
+      tareekh: dateStr,
+      sthiti: 'hazir',
+      overtime_ghante: Number(hours) || 0,
+      remarks: ''
+    };
+    appData.attendance.push(item);
+  } else {
+    item.overtime_ghante = Number(hours) || 0;
+  }
+  dataMehfoozKarein();
+  toastDikhaye('ओवरटाइम अपडेट हुआ!');
+}
+
+function sabkoHazirLagao() {
+  const dateStr = document.getElementById('hajiri-date-input').value;
+  appData.workers.forEach(w => {
+    let item = appData.attendance.find(a => a.worker_id === w.id && a.tareekh === dateStr);
+    if (!item) {
+      appData.attendance.push({
+        id: 'att_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+        worker_id: w.id,
+        tareekh: dateStr,
+        sthiti: 'hazir',
+        overtime_ghante: 0,
+        remarks: ''
+      });
+    } else {
+      item.sthiti = 'hazir';
+    }
+  });
+  dataMehfoozKarein();
+  activityJodein('सबकी हाजिरी', `${tareekhDisplay(dateStr)} को सभी को हाजिर लगाया`);
+  toastDikhaye('सभी को हाजिर लगा दिया गया!');
+  loadHajiriForDate(dateStr);
+}
+
+function renderReport(c) {
+  const aaj = aajKiTareekh();
+  const currMonth = aaj.substring(0, 7);
+
+  c.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="font-size:18px; font-weight:700;">हिसाब रिपोर्ट व शेयर</h2>
+      <button class="btn btn-primary" style="width:auto; padding:6px 12px; font-size:12px;" onclick="window.print()">🖨️ PDF / Print</button>
+    </div>
+
+    <div class="card no-print">
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">महीना चुनें:</label>
+            <input type="month" id="report-month-input" class="form-control" value="${currMonth}" onchange="generateReportData(this.value)">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">रिपोर्ट प्रकार:</label>
+            <select id="report-type-select" class="form-control" onchange="generateReportData(document.getElementById('report-month-input').value)">
+              <option value="all">सम्पूर्ण बिजनेस रिपोर्ट</option>
+              <option value="sites">साइट-वाइज हिसाब</option>
+              <option value="workers">मिस्त्री व हेल्पर हिसाब</option>
+              <option value="udhaar">उधार रिपोर्ट</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" style="flex:1;" onclick="csvExportKarein()">📥 Excel (CSV) डाउनलोड</button>
+          <button class="btn btn-whatsapp" style="flex:1;" onclick="shareReportAsText()">💬 WhatsApp / SMS शेयर</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="report-display-area" style="margin-top:16px;"></div>
+  `;
+
+  generateReportData(currMonth);
+}
+
+function generateReportData(monthStr) {
+  const c = document.getElementById('report-display-area');
+  const type = document.getElementById('report-type-select')?.value || 'all';
+  if (!c) return;
+
+  let html = `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Jaipur Door Solutions - रिपोर्ट (${monthStr})</div>
+      </div>
+      <div class="card-body">
+  `;
+
+  if (type === 'all' || type === 'sites') {
+    html += `
+      <h3 style="font-size:15px; font-weight:700; margin-bottom:8px; color:var(--primary);">1. साइट-वाइज हिसाब सारांश</h3>
+      <div class="table-responsive">
+        <table class="data-table">
+          <tr>
+            <th>साइट का नाम</th>
+            <th>पार्टी से आया</th>
+            <th>सामान खर्च</th>
+            <th>लेबर भुगतान</th>
+            <th>कुल बचा बैलेंस</th>
+          </tr>
+          ${appData.sites.map(s => {
+            const sum = calculateSiteSummary(s.id);
+            return `
+              <tr>
+                <td style="font-weight:600;">${s.naam}</td>
+                <td style="color:var(--success);">${rupayeFormat(sum.kul_aaya)}</td>
+                <td style="color:var(--danger);">${rupayeFormat(sum.direct_kharch)}</td>
+                <td style="color:var(--danger);">${rupayeFormat(sum.worker_payment)}</td>
+                <td style="font-weight:700; color:var(--primary);">${rupayeFormat(sum.baki)}</td>
+              </tr>
+            `;
+          }).join('')}
+        </table>
+      </div>
+      <div style="margin-bottom:20px;"></div>
+    `;
+  }
+
+  if (type === 'all' || type === 'workers') {
+    html += `
+      <h3 style="font-size:15px; font-weight:700; margin-bottom:8px; color:var(--primary);">2. मिस्त्री व हेल्पर रिपोर्ट (${monthStr})</h3>
+      <div class="table-responsive">
+        <table class="data-table">
+          <tr>
+            <th>नाम</th>
+            <th>काम</th>
+            <th>साइट</th>
+            <th>हाजिर</th>
+            <th>कमाई</th>
+            <th>दिया</th>
+            <th>बकाया</th>
+          </tr>
+          ${appData.workers.map(w => {
+            const ws = calculateWorkerSummary(w.id, monthStr);
+            return `
+              <tr>
+                <td style="font-weight:600;">${w.naam}</td>
+                <td>${w.kaam || 'मिस्त्री'}</td>
+                <td>${w.site_naam || 'सामान्य'}</td>
+                <td>${ws.hazir}</td>
+                <td style="font-weight:600;">${rupayeFormat(ws.kul_kamai)}</td>
+                <td style="color:var(--danger);">${rupayeFormat(ws.kul_diya)}</td>
+                <td style="font-weight:700; color:${ws.baki > 0 ? 'var(--danger)' : 'var(--success)'};">${rupayeFormat(ws.baki)}</td>
+              </tr>
+            `;
+          }).join('')}
+        </table>
+      </div>
+      <div style="margin-bottom:20px;"></div>
+    `;
+  }
+
+  if (type === 'all' || type === 'udhaar') {
+    const udhaarSum = calculateUdhaarSummary();
+    html += `
+      <h3 style="font-size:15px; font-weight:700; margin-bottom:8px; color:var(--primary);">3. उधार खाता सारांश</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div style="background:var(--success-light); padding:10px; border-radius:8px;">
+          <div style="font-size:12px; color:var(--success); font-weight:600;">कुल उधार जो मुझे वापस लेना है:</div>
+          <div style="font-size:18px; font-weight:700; color:var(--success);">${rupayeFormat(udhaarSum.lena_hai)}</div>
+        </div>
+        <div style="background:var(--danger-light); padding:10px; border-radius:8px;">
+          <div style="font-size:12px; color:var(--danger); font-weight:600;">कुल उधार जो मुझे वापस देना है:</div>
+          <div style="font-size:18px; font-weight:700; color:var(--danger);">${rupayeFormat(udhaarSum.dena_hai)}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  html += `</div></div>`;
+  c.innerHTML = html;
+}
+
+function shareReportAsText() {
+  const m = document.getElementById('report-month-input')?.value || aajKiTareekh().substring(0, 7);
+  const udhaarSum = calculateUdhaarSummary();
+  const dStats = calculateGharDashboard();
+
+  let text = "*Jaipur Door Solutions - हिसाब सारांश (" + m + ")*\n\n" +
+             "*कुल आया:* " + rupayeFormat(dStats.mahine_aaya) + "\n" +
+             "*कुल खर्च:* " + rupayeFormat(dStats.mahine_kharch) + "\n" +
+             "*महीने की बचत:* " + rupayeFormat(dStats.mahine_bacha) + "\n" +
+             "*मिस्त्री/हेल्पर बकाया:* " + rupayeFormat(dStats.worker_payment_baki) + "\n" +
+             "*उधार लेना बाकी:* " + rupayeFormat(udhaarSum.lena_hai) + "\n" +
+             "*उधार देना बाकी:* " + rupayeFormat(udhaarSum.dena_hai) + "\n\n" +
+             "🌐 www.jaipurdoorsolutions.com";
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'Jaipur Door Solutions Report',
+      text: text.replace(/\\n/g, '\n')
+    }).catch(() => {});
+  } else {
+    window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text.replace(/\\n/g, '\n')), '_blank');
+  }
+}
+
+function csvExportKarein() {
+  let csv = 'Type,Date,Title/Person,Category,Amount,Payment Method,Remarks\n';
+  
+  appData.site_transactions.forEach(t => {
+    const s = appData.sites.find(st => st.id === t.site_id);
+    csv += `"Site Transaction","${t.tareekh}","${s ? s.naam : ''} - ${t.kaam}","${t.shreni || ''}","${t.prakar === 'aaya' ? '' : '-'}${t.rakam}","${t.tareeka}","${t.remarks || ''}"\n`;
+  });
+
+  appData.daily_transactions.forEach(t => {
+    csv += `"Daily Transaction","${t.tareekh}","${t.kisliye}","${t.shreni || t.srot || ''}","${t.prakar === 'aaya' ? '' : '-'}${t.rakam}","${t.tareeka}","${t.remarks || ''}"\n`;
+  });
+
+  appData.worker_payments.forEach(p => {
+    const w = appData.workers.find(wk => wk.id === p.worker_id);
+    csv += `"Worker Payment","${p.tareekh}","${w ? w.naam : ''}","${p.prakar}","-${p.rakam}","${p.tareeka}","${p.remarks || ''}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Jaipur_Door_Solutions_Hisaab_${aajKiTareekh()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toastDikhaye('CSV फाइल डाउनलोड हो गई!');
+}
+
+function changePinModalKholo() {
+  const currentPin = (appData.settings && appData.settings.pin) ? appData.settings.pin : '1234';
+  const oldPin = prompt("वर्तमान सुरक्षा PIN दर्ज करें:");
+  if (oldPin === currentPin) {
+    const newPin = prompt("नया 4 से 6 अंकों का PIN दर्ज करें:");
+    if (newPin && newPin.trim().length >= 4) {
+      appData.settings.pin = newPin.trim();
+      dataMehfoozKarein();
+      toastDikhaye("✅ PIN सफलतापूर्वक बदल गया!");
+    } else {
+      toastDikhaye("❌ नया PIN कम से कम 4 अंकों का होना चाहिए");
+    }
+  } else if (oldPin !== null) {
+    toastDikhaye("❌ गलत वर्तमान PIN!");
+  }
+}
+
+function renderSetting(c) {
+  c.innerHTML = `
+    <h2 style="font-size:18px; font-weight:700; margin-bottom:14px;">Settings & Cloud Backup</h2>
+
+    <!-- CLOUD FIREBASE SYNC -->
+    <div class="card" style="border-left: 4px solid var(--accent);">
+      <div class="card-header"><div class="card-title">☁️ Firebase Cloud ऑटो-सिंक</div></div>
+      <div class="card-body">
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">
+          आपका सारा हिसाब-किताब ऑटोमेटिक Firebase क्लाउड सर्वर पर सुरक्षित होता रहता है। आप इसे किसी भी डिवाइस से पुनः लोड कर सकते हैं।
+        </p>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-primary" style="flex:1;" onclick="if(window.syncToFirebaseCloud) { window.syncToFirebaseCloud(); toastDikhaye('☁️ क्लाउड पर डेटा सुरक्षित हो गया!'); }">☁️ तुरंत क्लाउड सेव</button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="if(window.loadFromFirebaseCloud) { window.loadFromFirebaseCloud(); }">🔄 क्लाउड से लोड करें</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOCAL BACKUP & RESTORE -->
+    <div class="card">
+      <div class="card-header"><div class="card-title">💾 ऑफलाइन बैकअप (Local File)</div></div>
+      <div class="card-body">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button class="btn btn-primary" onclick="dataBackupDownload()">📥 पूरा डेटा JSON फाइल में डाउनलोड करें</button>
+          <div style="border-top:1px solid var(--border); margin:4px 0;"></div>
+          <label class="form-label">बैकअप फाइल से डेटा वापस लाएं (Restore):</label>
+          <input type="file" id="restore-file-input" accept=".json" class="form-control" onchange="dataRestoreKarein(event)">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="card">
+      <div class="card-header"><div class="card-title">🔒 ऐप सुरक्षा व PIN</div></div>
+      <div class="card-body">
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary" style="flex:1;" onclick="changePinModalKholo()">🔑 ऐप PIN बदलें</button>
+          <button class="btn btn-danger" style="flex:1;" onclick="lockApp()">🔒 अभी ऐप लॉक करें</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="card" style="border-color:var(--danger-light);">
+      <div class="card-header" style="background:var(--danger-light); color:var(--danger);">
+        <div class="card-title" style="color:var(--danger);">सावधानी (Reset Data)</div>
+      </div>
+      <div class="card-body">
+        <button class="btn btn-danger" onclick="purnaResetKarein()">⚠️ सारा डेटा मिटाकर नया शुरू करें</button>
+      </div>
+    </div>
+  `;
+}
+
+function dataBackupDownload() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", `Jaipur_Door_Solutions_Backup_${aajKiTareekh()}.json`);
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+  activityJodein('बैकअप लिया', 'बैकअप फाइल डाउनलोड');
+  toastDikhaye('बैकअप फाइल डाउनलोड हो गई!');
+}
+
+function dataRestoreKarein(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (parsed.sites !== undefined && parsed.workers !== undefined) {
+        if (confirm("क्या आप यह बैकअप वापस लोड करना चाहते हैं? वर्तमान डेटा बदल जाएगा।")) {
+          appData = parsed;
+          dataMehfoozKarein();
+          activityJodein('डाटा रीस्टोर', 'बैकअप फाइल से रीस्टोर');
+          toastDikhaye('डेटा सफलतापूर्वक रीस्टोर हो गया!');
+          renderApp();
+        }
+      } else {
+        alert("यह सही हिसाब बही बैकअप फाइल नहीं है।");
+      }
+    } catch(err) {
+      alert("फाइल में त्रुटि: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function purnaResetKarein() {
+  if (confirm("क्या आप वाकई सारा डेटा मिटाना चाहते हैं?")) {
+    appData.sites = [];
+    appData.site_transactions = [];
+    appData.workers = [];
+    appData.attendance = [];
+    appData.worker_payments = [];
+    appData.daily_transactions = [];
+    appData.loans = [];
+    appData.loan_repayments = [];
+    appData.activity_logs = [];
+    dataMehfoozKarein();
+    activityJodein('डाटा रीसेट', 'सारा डेटा साफ किया गया');
+    toastDikhaye('डेटा साफ कर दिया गया!');
+    renderApp();
+  }
+}
+
+function khojModalKholo() {
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">पूरे ऐप में खोजें (Global Search)</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <div class="form-group">
+      <input type="text" id="global-search-input" class="form-control" placeholder="साइट, मिस्त्री, हेल्पर, सामान या रिमार्क टाइप करें..." onkeyup="globalSearchKarein(this.value)">
+    </div>
+    <div id="global-search-results" class="item-list" style="max-height:350px; overflow-y:auto;">
+      <div style="text-align:center; color:var(--text-muted); padding:20px;">खोजने के लिए ऊपर टाइप करें...</div>
+    </div>
+  `;
+  modalKholo(html);
+  setTimeout(() => document.getElementById('global-search-input')?.focus(), 100);
+}
+
+function globalSearchKarein(term) {
+  const q = term.trim().toLowerCase();
+  const c = document.getElementById('global-search-results');
+  if (!c) return;
+
+  if (q.length < 2) {
+    c.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">कम से कम 2 अक्षर टाइप करें...</div>';
+    return;
+  }
+
+  let results = [];
+
+  appData.sites.forEach(s => {
+    if (s.naam.toLowerCase().includes(q) || (s.malik_naam && s.malik_naam.toLowerCase().includes(q))) {
+      results.push({
+        title: s.naam,
+        sub: `साइट | पार्टी: ${s.malik_naam || '-'}`,
+        action: `modalBandKarein(); viewBadlo('site_detail', '${s.id}');`
+      });
+    }
+  });
+
+  appData.workers.forEach(w => {
+    if (w.naam.toLowerCase().includes(q) || (w.kaam && w.kaam.toLowerCase().includes(q)) || (w.site_naam && w.site_naam.toLowerCase().includes(q))) {
+      results.push({
+        title: w.naam,
+        sub: `मिस्त्री/हेल्पर | काम: ${w.kaam || '-'} | साइट: ${w.site_naam || '-'}`,
+        action: `modalBandKarein(); viewBadlo('worker_detail', '${w.id}');`
+      });
+    }
+  });
+
+  appData.site_transactions.forEach(t => {
+    if ((t.kaam && t.kaam.toLowerCase().includes(q)) || (t.shreni && t.shreni.toLowerCase().includes(q))) {
+      const s = appData.sites.find(site => site.id === t.site_id);
+      results.push({
+        title: `${t.kaam} (${rupayeFormat(t.rakam)})`,
+        sub: `साइट खर्च/आया | ${s ? s.naam : ''}`,
+        action: `modalBandKarein(); viewBadlo('site_detail', '${t.site_id}');`
+      });
+    }
+  });
+
+  appData.daily_transactions.forEach(t => {
+    if ((t.kisliye && t.kisliye.toLowerCase().includes(q)) || (t.shreni && t.shreni.toLowerCase().includes(q))) {
+      results.push({
+        title: `${t.kisliye} (${rupayeFormat(t.rakam)})`,
+        sub: `दैनिक हिसाब | ${tareekhDisplay(t.tareekh)}`,
+        action: `modalBandKarein(); viewBadlo('rozana');`
+      });
+    }
+  });
+
+  appData.loans.forEach(l => {
+    if (l.aadmi_naam.toLowerCase().includes(q) || (l.kisliye && l.kisliye.toLowerCase().includes(q))) {
+      results.push({
+        title: `${l.aadmi_naam} (${rupayeFormat(l.rakam)})`,
+        sub: `उधार | ${l.disha === 'diya' ? 'लेना है' : 'देना है'}`,
+        action: `modalBandKarein(); viewBadlo('udhaar');`
+      });
+    }
+  });
+
+  if (results.length === 0) {
+    c.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">कोई हिसाब नहीं मिला।</div>';
+    return;
+  }
+
+  c.innerHTML = results.map(r => `
+    <div class="item-card" onclick="${r.action}" style="cursor:pointer;">
+      <div class="item-left">
+        <div class="item-title">${r.title}</div>
+        <div class="item-desc">${r.sub}</div>
+      </div>
+      <div class="item-right">➔</div>
+    </div>
+  `).join('');
+}
+
+function quickAddModalKholo() {
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">जल्दी हिसाब जोड़ें (Quick Add)</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <div class="quick-action-grid" style="grid-template-columns:repeat(2, 1fr); gap:12px;">
+      <div class="action-btn" onclick="modalBandKarein(); paisaAayaModalKholo();">
+        <div class="action-icon green">+</div>
+        <div class="action-label" style="font-size:13px;">पैसा आया</div>
+      </div>
+      <div class="action-btn" onclick="modalBandKarein(); kharchaModalKholo();">
+        <div class="action-icon red">-</div>
+        <div class="action-label" style="font-size:13px;">खर्चा हुआ</div>
+      </div>
+      <div class="action-btn" onclick="modalBandKarein(); workerPaymentModalKholo();">
+        <div class="action-icon yellow">💸</div>
+        <div class="action-label" style="font-size:13px;">मजदूरी / पेमेंट</div>
+      </div>
+      <div class="action-btn" onclick="modalBandKarein(); viewBadlo('hajiri');">
+        <div class="action-icon blue">📋</div>
+        <div class="action-label" style="font-size:13px;">हाजिरी लगाएं</div>
+      </div>
+      <div class="action-btn" onclick="modalBandKarein(); udhaarModalKholo('diya');">
+        <div class="action-icon red">🤝</div>
+        <div class="action-label" style="font-size:13px;">उधार दिया</div>
+      </div>
+      <div class="action-btn" onclick="modalBandKarein(); udhaarModalKholo('liya');">
+        <div class="action-icon green">🤲</div>
+        <div class="action-label" style="font-size:13px;">उधार लिया</div>
+      </div>
+    </div>
+  `;
+  modalKholo(html);
+}
+
+function nayiSiteModalKholo() {
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">नई साइट जोड़ें</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="nayiSiteSave(event)">
+      <div class="form-group">
+        <label class="form-label">साइट का नाम *</label>
+        <input type="text" id="site-f-naam" class="form-control" required placeholder="जैसे: शर्मा साहब का मकान / गोडाउन">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">पार्टी का नाम</label>
+          <input type="text" id="site-f-malik" class="form-control" placeholder="क्लाइंट का नाम">
+        </div>
+        <div class="form-group">
+          <label class="form-label">मोबाइल नंबर</label>
+          <input type="tel" id="site-f-mobile" class="form-control" placeholder="मोबाइल">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">साइट का पता / लोकेशन</label>
+        <input type="text" id="site-f-pata" class="form-control" placeholder="जैसे: मानसरोवर / वैशाली">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">शुरू तारीख</label>
+          <input type="date" id="site-f-start" class="form-control" value="${aajKiTareekh()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">स्थिति</label>
+          <select id="site-f-sthiti" class="form-control">
+            <option value="चालू">चालू है</option>
+            <option value="रुकी हुई">रुकी हुई है</option>
+            <option value="पूरा हो गया">पूरा हो गया</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">शुरू का बाकी पैसा</label>
+        <input type="number" id="site-f-opening" class="form-control" placeholder="0" value="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="site-f-remarks" class="form-control" placeholder="काम के बारे में विवरण..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">साइट महफ़ूज़ करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function nayiSiteSave(e) {
+  e.preventDefault();
+  const naam = document.getElementById('site-f-naam').value.trim();
+  if (!naam) return alert('साइट का नाम लिखना जरूरी है!');
+
+  const newSite = {
+    id: 'site_' + Date.now(),
+    naam: naam,
+    malik_naam: document.getElementById('site-f-malik').value.trim(),
+    mobile: document.getElementById('site-f-mobile').value.trim(),
+    pata: document.getElementById('site-f-pata').value.trim(),
+    shuru_tareekh: document.getElementById('site-f-start').value,
+    khatam_tareekh: '',
+    sthiti: document.getElementById('site-f-sthiti').value,
+    shuru_baki: Number(document.getElementById('site-f-opening').value) || 0,
+    remarks: document.getElementById('site-f-remarks').value.trim()
+  };
+
+  appData.sites.push(newSite);
+  dataMehfoozKarein();
+  activityJodein('नई साइट जोड़ी', newSite.naam);
+  modalBandKarein();
+  toastDikhaye('साइट जोड़ दी गई!');
+  viewBadlo('site_detail', newSite.id);
+}
+
+function siteEditModalKholo(siteId) {
+  const site = appData.sites.find(s => s.id === siteId);
+  if (!site) return;
+
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">साइट विवरण बदलें</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="siteEditSave(event, '${site.id}')">
+      <div class="form-group">
+        <label class="form-label">साइट का नाम *</label>
+        <input type="text" id="site-e-naam" class="form-control" required value="${site.naam}">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">पार्टी का नाम</label>
+          <input type="text" id="site-e-malik" class="form-control" value="${site.malik_naam || ''}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">मोबाइल नंबर</label>
+          <input type="tel" id="site-e-mobile" class="form-control" value="${site.mobile || ''}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">साइट का पता</label>
+        <input type="text" id="site-e-pata" class="form-control" value="${site.pata || ''}">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">स्थिति</label>
+          <select id="site-e-sthiti" class="form-control">
+            <option value="चालू" ${site.sthiti === 'चालू' ? 'selected' : ''}>चालू है</option>
+            <option value="रुकी हुई" ${site.sthiti === 'रुकी हुई' ? 'selected' : ''}>रुकी हुई है</option>
+            <option value="पूरा हो गया" ${site.sthiti === 'पूरा हो गया' ? 'selected' : ''}>पूरा हो गया</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">शुरू का बाकी पैसा</label>
+          <input type="number" id="site-e-opening" class="form-control" value="${site.shuru_baki || 0}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="site-e-remarks" class="form-control">${site.remarks || ''}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">बदलाव महफ़ूज़ करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function siteEditSave(e, siteId) {
+  e.preventDefault();
+  const site = appData.sites.find(s => s.id === siteId);
+  if (!site) return;
+
+  site.naam = document.getElementById('site-e-naam').value.trim();
+  site.malik_naam = document.getElementById('site-e-malik').value.trim();
+  site.mobile = document.getElementById('site-e-mobile').value.trim();
+  site.pata = document.getElementById('site-e-pata').value.trim();
+  site.sthiti = document.getElementById('site-e-sthiti').value;
+  site.shuru_baki = Number(document.getElementById('site-e-opening').value) || 0;
+  site.remarks = document.getElementById('site-e-remarks').value.trim();
+
+  dataMehfoozKarein();
+  activityJodein('साइट बदली', site.naam);
+  modalBandKarein();
+  toastDikhaye('साइट विवरण अपडेट हो गया!');
+  viewBadlo('site_detail', site.id);
+}
+
+function siteMitayein(siteId) {
+  if (confirm("क्या आप वाकई यह साइट और इसका सारा हिसाब मिटाना चाहते हैं?")) {
+    appData.sites = appData.sites.filter(s => s.id !== siteId);
+    appData.site_transactions = appData.site_transactions.filter(t => t.site_id !== siteId);
+    dataMehfoozKarein();
+    activityJodein('साइट मिटाई', siteId);
+    toastDikhaye('साइट मिटा दी गई!');
+    viewBadlo('sites');
+  }
+}
+
+function nayaWorkerModalKholo(prefilledSiteName = '') {
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">नया मिस्त्री / हेल्पर जोड़ें</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="nayaWorkerSave(event)">
+      <div class="form-group">
+        <label class="form-label">नाम *</label>
+        <input type="text" id="w-f-naam" class="form-control" required placeholder="जैसे: राहुल मिस्त्री">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">मोबाइल नंबर</label>
+          <input type="tel" id="w-f-mobile" class="form-control" placeholder="मोबाइल नंबर">
+        </div>
+        <div class="form-group">
+          <label class="form-label">काम (मिस्त्री / हेल्पर)</label>
+          <input type="text" id="w-f-kaam" list="kaam-list" class="form-control" placeholder="मिस्त्री या हेल्पर">
+          <datalist id="kaam-list">
+            <option value="मिस्त्री">
+            <option value="हेल्पर">
+            <option value="कारपेंटर">
+            <option value="पेंटर">
+            <option value="फैब्रिकेटर">
+          </datalist>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">किस साइट पर काम करेगा? (साइट का नाम लिखें)</label>
+        <input type="text" id="w-f-site-naam" list="site-suggestions" class="form-control" placeholder="साइट का नाम टाइप करें..." value="${prefilledSiteName}">
+        <datalist id="site-suggestions">
+          ${appData.sites.map(s => `<option value="${s.naam}">`).join('')}
+        </datalist>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">रोज़ की मजदूरी (रेट) *</label>
+          <input type="number" id="w-f-rate" class="form-control" required placeholder="जैसे: 700">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ओवरटाइम रेट (प्रति घंटा)</label>
+          <input type="number" id="w-f-ot" class="form-control" placeholder="0" value="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">काम शुरू करने की तारीख</label>
+        <input type="date" id="w-f-date" class="form-control" value="${aajKiTareekh()}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="w-f-remarks" class="form-control" placeholder="पहचान या अन्य विवरण..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">मिस्त्री/हेल्पर महफ़ूज़ करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function nayaWorkerSave(e) {
+  e.preventDefault();
+  const naam = document.getElementById('w-f-naam').value.trim();
+  const rate = Number(document.getElementById('w-f-rate').value);
+  const siteNaam = document.getElementById('w-f-site-naam').value.trim();
+
+  if (!naam) return alert('नाम लिखना जरूरी है!');
+  if (!rate || rate <= 0) return alert('मजदूरी रेट सही लिखें!');
+
+  const matchedSite = appData.sites.find(s => s.naam.toLowerCase() === siteNaam.toLowerCase());
+
+  const newW = {
+    id: 'w_' + Date.now(),
+    naam: naam,
+    mobile: document.getElementById('w-f-mobile').value.trim(),
+    kaam: document.getElementById('w-f-kaam').value.trim() || 'मिस्त्री',
+    site_naam: siteNaam,
+    site_id: matchedSite ? matchedSite.id : null,
+    rate: rate,
+    overtime_rate: Number(document.getElementById('w-f-ot').value) || 0,
+    shuru_tareekh: document.getElementById('w-f-date').value,
+    remarks: document.getElementById('w-f-remarks').value.trim()
+  };
+
+  appData.workers.push(newW);
+  dataMehfoozKarein();
+  activityJodein('नया व्यक्ति जोड़ा', `${newW.naam} (${newW.kaam})`);
+  modalBandKarein();
+  toastDikhaye('मिस्त्री/हेल्पर सफलतापूर्वक जोड़ दिया गया!');
+  viewBadlo('worker_detail', newW.id);
+}
+
+function workerEditModalKholo(workerId) {
+  const w = appData.workers.find(wk => wk.id === workerId);
+  if (!w) return;
+
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">मिस्त्री/हेल्पर विवरण बदलें</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="workerEditSave(event, '${w.id}')">
+      <div class="form-group">
+        <label class="form-label">नाम *</label>
+        <input type="text" id="w-e-naam" class="form-control" required value="${w.naam}">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">मोबाइल नंबर</label>
+          <input type="tel" id="w-e-mobile" class="form-control" value="${w.mobile || ''}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">काम</label>
+          <input type="text" id="w-e-kaam" class="form-control" value="${w.kaam || ''}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">साइट का नाम (मैन्युअल लिखें)</label>
+        <input type="text" id="w-e-site-naam" list="site-suggestions" class="form-control" value="${w.site_naam || ''}">
+        <datalist id="site-suggestions">
+          ${appData.sites.map(s => `<option value="${s.naam}">`).join('')}
+        </datalist>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">रोज़ की मजदूरी (रेट) *</label>
+          <input type="number" id="w-e-rate" class="form-control" required value="${w.rate}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ओवरटाइम रेट</label>
+          <input type="number" id="w-e-ot" class="form-control" value="${w.overtime_rate || 0}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="w-e-remarks" class="form-control">${w.remarks || ''}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">बदलाव महफ़ूज़ करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function workerEditSave(e, workerId) {
+  e.preventDefault();
+  const w = appData.workers.find(wk => wk.id === workerId);
+  if (!w) return;
+
+  const siteNaam = document.getElementById('w-e-site-naam').value.trim();
+  const matchedSite = appData.sites.find(s => s.naam.toLowerCase() === siteNaam.toLowerCase());
+
+  w.naam = document.getElementById('w-e-naam').value.trim();
+  w.mobile = document.getElementById('w-e-mobile').value.trim();
+  w.kaam = document.getElementById('w-e-kaam').value.trim();
+  w.site_naam = siteNaam;
+  w.site_id = matchedSite ? matchedSite.id : null;
+  w.rate = Number(document.getElementById('w-e-rate').value) || 0;
+  w.overtime_rate = Number(document.getElementById('w-e-ot').value) || 0;
+  w.remarks = document.getElementById('w-e-remarks').value.trim();
+
+  dataMehfoozKarein();
+  activityJodein('मिस्त्री/हेल्पर विवरण बदला', w.naam);
+  modalBandKarein();
+  toastDikhaye('विवरण बदल गया!');
+  viewBadlo('worker_detail', w.id);
+}
+
+function workerMitayein(workerId) {
+  if (confirm("क्या आप वाकई इस मिस्त्री/हेल्पर को हटाना चाहते हैं?")) {
+    appData.workers = appData.workers.filter(w => w.id !== workerId);
+    appData.attendance = appData.attendance.filter(a => a.worker_id !== workerId);
+    appData.worker_payments = appData.worker_payments.filter(p => p.worker_id !== workerId);
+    dataMehfoozKarein();
+    activityJodein('मिस्त्री/हेल्पर हटाया', workerId);
+    toastDikhaye('हटा दिया गया!');
+    viewBadlo('workers');
+  }
+}
+
+function paisaAayaModalKholo() {
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">पैसा आया दर्ज करें</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="paisaAayaSave(event)">
+      <div class="form-group">
+        <label class="form-label">पैसा कहाँ आया?</label>
+        <select id="aaya-target" class="form-control">
+          <option value="daily">रोज़ाना खाता (दुकान / बिजनेस)</option>
+          ${appData.sites.map(s => `<option value="site_${s.id}">साइट पर: ${s.naam}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">तारीख *</label>
+          <input type="date" id="aaya-tareekh" class="form-control" required value="${aajKiTareekh()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">कितने रुपये मिले? *</label>
+          <input type="number" id="aaya-rakam" class="form-control" required placeholder="0" min="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">पैसा किस से / किस काम का आया? *</label>
+        <input type="text" id="aaya-vivran" class="form-control" required placeholder="जैसे: क्लाइंट पेमेंट / बिक्री">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">माध्यम</label>
+          <select id="aaya-tareeka" class="form-control">
+            <option value="कैश">कैश</option>
+            <option value="UPI">UPI</option>
+            <option value="बैंक">बैंक</option>
+            <option value="दूसरा">दूसरा</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">कैटेगरी (चुनें या खुद लिखें)</label>
+          <input type="text" id="aaya-shreni" list="income-cat-list" class="form-control" placeholder="कैटेगरी लिखें या चुनें" value="बिजनेस बिक्री">
+          <datalist id="income-cat-list">
+            ${appData.settings.income_sources_daily.map(c => `<option value="${c}">`).join('')}
+          </datalist>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="aaya-remarks" class="form-control" placeholder="टिप्पणी..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-success">पैसा आया दर्ज करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function paisaAayaSave(e) {
+  e.preventDefault();
+  const target = document.getElementById('aaya-target').value;
+  const tareekh = document.getElementById('aaya-tareekh').value;
+  const rakam = Number(document.getElementById('aaya-rakam').value);
+  const vivran = document.getElementById('aaya-vivran').value.trim();
+  const tareeka = document.getElementById('aaya-tareeka').value;
+  const shreni = document.getElementById('aaya-shreni').value.trim() || 'सामान्य';
+  const remarks = document.getElementById('aaya-remarks').value.trim();
+
+  if (!rakam || rakam <= 0) return alert('सही रकम भरें!');
+  if (!vivran) return alert('विवरण भरना जरूरी है!');
+
+  if (target.startsWith('site_')) {
+    const siteId = target.replace('site_', '');
+    const tx = {
+      id: 'st_' + Date.now(),
+      site_id: siteId,
+      tareekh: tareekh,
+      prakar: 'aaya',
+      shreni: shreni,
+      kaam: vivran,
+      rakam: rakam,
+      tareeka: tareeka,
+      remarks: remarks
+    };
+    appData.site_transactions.push(tx);
+    activityJodein('साइट पर पैसा आया', `${rupayeFormat(rakam)} - ${vivran}`);
+  } else {
+    const tx = {
+      id: 'dt_' + Date.now(),
+      tareekh: tareekh,
+      prakar: 'aaya',
+      srot: shreni,
+      shreni: shreni,
+      kisliye: vivran,
+      rakam: rakam,
+      tareeka: tareeka,
+      remarks: remarks
+    };
+    appData.daily_transactions.push(tx);
+    activityJodein('रोज़ाना पैसा आया', `${rupayeFormat(rakam)} - ${vivran}`);
+  }
+
+  dataMehfoozKarein();
+  modalBandKarein();
+  toastDikhaye('पैसा आया दर्ज हो गया!');
+  renderApp();
+}
+
+function kharchaModalKholo() {
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">खर्चा दर्ज करें</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="kharchaSave(event)">
+      <div class="form-group">
+        <label class="form-label">खर्चा कहाँ हुआ?</label>
+        <select id="kharch-target" class="form-control">
+          <option value="daily">रोज़ाना खर्च (दुकान / बिजनेस / पर्सनल)</option>
+          ${appData.sites.map(s => `<option value="site_${s.id}">साइट का खर्च: ${s.naam}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">तारीख *</label>
+          <input type="date" id="kharch-tareekh" class="form-control" required value="${aajKiTareekh()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">रकम (रुपये) *</label>
+          <input type="number" id="kharch-rakam" class="form-control" required placeholder="0" min="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">किस काम में खर्च हुए? *</label>
+        <input type="text" id="kharch-vivran" class="form-control" required placeholder="जैसे: प्लाईवुड, फेविकोल, पेट्रोल...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">माध्यम</label>
+          <select id="kharch-tareeka" class="form-control">
+            <option value="कैश">कैश</option>
+            <option value="UPI">UPI</option>
+            <option value="बैंक">बैंक</option>
+            <option value="दूसरा">दूसरा</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">कैटेगरी (चुनें या खुद लिखें)</label>
+          <input type="text" id="kharch-shreni" list="expense-cat-list" class="form-control" placeholder="कैटेगरी लिखें या चुनें" value="सामान">
+          <datalist id="expense-cat-list">
+            ${appData.settings.categories_site.map(c => `<option value="${c}">`).join('')}
+          </datalist>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="kharch-remarks" class="form-control" placeholder="दुकानदार का नाम या बिल नंबर..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-danger">खर्चा महफ़ूज़ करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function kharchaSave(e) {
+  e.preventDefault();
+  const target = document.getElementById('kharch-target').value;
+  const tareekh = document.getElementById('kharch-tareekh').value;
+  const rakam = Number(document.getElementById('kharch-rakam').value);
+  const vivran = document.getElementById('kharch-vivran').value.trim();
+  const tareeka = document.getElementById('kharch-tareeka').value;
+  const shreni = document.getElementById('kharch-shreni').value.trim() || 'सामान';
+  const remarks = document.getElementById('kharch-remarks').value.trim();
+
+  if (!rakam || rakam <= 0) return alert('सही रकम भरें!');
+  if (!vivran) return alert('काम का नाम लिखें!');
+
+  if (target.startsWith('site_')) {
+    const siteId = target.replace('site_', '');
+    const tx = {
+      id: 'st_' + Date.now(),
+      site_id: siteId,
+      tareekh: tareekh,
+      prakar: 'kharch',
+      shreni: shreni,
+      kaam: vivran,
+      rakam: rakam,
+      tareeka: tareeka,
+      remarks: remarks
+    };
+    appData.site_transactions.push(tx);
+    activityJodein('साइट पर खर्चा', `${rupayeFormat(rakam)} - ${vivran}`);
+  } else {
+    const tx = {
+      id: 'dt_' + Date.now(),
+      tareekh: tareekh,
+      prakar: 'kharch',
+      shreni: shreni,
+      kisliye: vivran,
+      rakam: rakam,
+      tareeka: tareeka,
+      remarks: remarks
+    };
+    appData.daily_transactions.push(tx);
+    activityJodein('रोज़ाना खर्चा', `${rupayeFormat(rakam)} - ${vivran}`);
+  }
+
+  dataMehfoozKarein();
+  modalBandKarein();
+  toastDikhaye('खर्चा दर्ज हो गया!');
+  renderApp();
+}
+
+function siteTransactionModalKholo(siteId, type) {
+  const isAaya = type === 'aaya';
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">${isAaya ? 'साइट पर पैसा आया' : 'साइट का खर्चा दर्ज करें'}</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="siteTransactionSave(event, '${siteId}', '${type}')">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">तारीख *</label>
+          <input type="date" id="stx-tareekh" class="form-control" required value="${aajKiTareekh()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">रकम (रुपये) *</label>
+          <input type="number" id="stx-rakam" class="form-control" required placeholder="0" min="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">${isAaya ? 'पैसा किस से / किस काम का आया?' : 'किस सामान / काम में खर्च हुआ?'} *</label>
+        <input type="text" id="stx-kaam" class="form-control" required placeholder="${isAaya ? 'जैसे: किश्त' : 'जैसे: हार्डवेयर / प्लाई'}">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">माध्यम</label>
+          <select id="stx-tareeka" class="form-control">
+            <option value="कैश">कैश</option>
+            <option value="UPI">UPI</option>
+            <option value="बैंक">बैंक</option>
+            <option value="दूसरा">दूसरा</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">कैटेगरी (चुनें या खुद लिखें)</label>
+          <input type="text" id="stx-shreni" list="site-cat-list" class="form-control" value="${isAaya ? 'पार्टी पेमेंट' : 'सामान'}">
+          <datalist id="site-cat-list">
+            ${appData.settings.categories_site.map(c => `<option value="${c}">`).join('')}
+          </datalist>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="stx-remarks" class="form-control" placeholder="नोट..."></textarea>
+      </div>
+      <button type="submit" class="btn ${isAaya ? 'btn-success' : 'btn-danger'}">महफ़ूज़ करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function siteTransactionSave(e, siteId, type) {
+  e.preventDefault();
+  const tareekh = document.getElementById('stx-tareekh').value;
+  const rakam = Number(document.getElementById('stx-rakam').value);
+  const kaam = document.getElementById('stx-kaam').value.trim();
+  const tareeka = document.getElementById('stx-tareeka').value;
+  const shreni = document.getElementById('stx-shreni').value.trim() || 'सामान';
+  const remarks = document.getElementById('stx-remarks').value.trim();
+
+  if (!rakam || rakam <= 0) return alert('रकम सही भरें!');
+  if (!kaam) return alert('काम का नाम भरें!');
+
+  const tx = {
+    id: 'st_' + Date.now(),
+    site_id: siteId,
+    tareekh: tareekh,
+    prakar: type,
+    shreni: shreni,
+    kaam: kaam,
+    rakam: rakam,
+    tareeka: tareeka,
+    remarks: remarks
+  };
+
+  appData.site_transactions.push(tx);
+  dataMehfoozKarein();
+  activityJodein(type === 'aaya' ? 'साइट पर पैसा आया' : 'साइट पर खर्च', `${rupayeFormat(rakam)} - ${kaam}`);
+  modalBandKarein();
+  toastDikhaye('हिसाब दर्ज हो गया!');
+  viewBadlo('site_detail', siteId);
+}
+
+function siteTransactionMitayein(txId, siteId) {
+  if (confirm("क्या आप वाकई यह हिसाब मिटाना चाहते हैं?")) {
+    appData.site_transactions = appData.site_transactions.filter(t => t.id !== txId);
+    dataMehfoozKarein();
+    activityJodein('साइट हिसाब मिटाया', txId);
+    toastDikhaye('हिसाब मिटा दिया गया!');
+    viewBadlo('site_detail', siteId);
+  }
+}
+
+function workerPaymentModalKholo(preselectedWorkerId = null) {
+  if (appData.workers.length === 0) {
+    alert('पहले मिस्त्री या हेल्पर जोड़ें!');
+    return;
+  }
+
+  const selectedWorker = appData.workers.find(w => w.id === preselectedWorkerId) || appData.workers[0];
+  const summary = calculateWorkerSummary(selectedWorker.id);
+
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">मजदूरी या एडवांस भुगतान दें</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="workerPaymentSave(event)">
+      <div class="form-group">
+        <label class="form-label">मिस्त्री / हेल्पर चुनें *</label>
+        <select id="wp-f-worker" class="form-control" onchange="workerPaymentChangeSummary(this.value)">
+          ${appData.workers.map(w => `<option value="${w.id}" ${w.id === selectedWorker.id ? 'selected' : ''}>${w.naam} (${w.kaam || 'मिस्त्री'}) - रेट: ₹${w.rate}</option>`).join('')}
+        </select>
+      </div>
+
+      <div id="wp-balance-preview" style="background:var(--primary-light); padding:10px; border-radius:8px; margin-bottom:12px; font-size:12.5px;">
+        <div>कुल कमाई: <strong>${rupayeFormat(summary.kul_kamai)}</strong> | कुल दिया: <strong>${rupayeFormat(summary.kul_diya)}</strong></div>
+        <div style="color:var(--danger); font-weight:700; font-size:14px; margin-top:2px;">
+          अभी बकाया मजदूरी: ${rupayeFormat(summary.baki)}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">तारीख *</label>
+          <input type="date" id="wp-f-date" class="form-control" required value="${aajKiTareekh()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">कितने रुपये दिए? (रकम) *</label>
+          <input type="number" id="wp-f-rakam" class="form-control" required placeholder="0" min="1">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">भुगतान प्रकार</label>
+          <select id="wp-f-prakar" class="form-control">
+            <option value="payment">मजदूरी हिसाब</option>
+            <option value="advance">एडवांस</option>
+            <option value="dusra">अन्य खर्चा</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">माध्यम</label>
+          <select id="wp-f-tareeka" class="form-control">
+            <option value="कैश">कैश</option>
+            <option value="UPI">UPI</option>
+            <option value="बैंक">बैंक</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="wp-f-remarks" class="form-control" placeholder="टिप्पणी..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-success">पेमेंट महफ़ूज़ करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function workerPaymentChangeSummary(workerId) {
+  const s = calculateWorkerSummary(workerId);
+  const el = document.getElementById('wp-balance-preview');
+  if (el) {
+    el.innerHTML = `
+      <div>कुल कमाई: <strong>${rupayeFormat(s.kul_kamai)}</strong> | कुल दिया: <strong>${rupayeFormat(s.kul_diya)}</strong></div>
+      <div style="color:var(--danger); font-weight:700; font-size:14px; margin-top:2px;">
+        अभी बकाया मजदूरी: ${rupayeFormat(s.baki)}
+      </div>
+    `;
+  }
+}
+
+function workerPaymentSave(e) {
+  e.preventDefault();
+  const workerId = document.getElementById('wp-f-worker').value;
+  const worker = appData.workers.find(w => w.id === workerId);
+  const rakam = Number(document.getElementById('wp-f-rakam').value);
+  const tareekh = document.getElementById('wp-f-date').value;
+  const prakar = document.getElementById('wp-f-prakar').value;
+  const tareeka = document.getElementById('wp-f-tareeka').value;
+  const remarks = document.getElementById('wp-f-remarks').value.trim();
+
+  if (!rakam || rakam <= 0) return alert('रकम सही भरें!');
+
+  const payment = {
+    id: 'wp_' + Date.now(),
+    worker_id: workerId,
+    site_id: worker ? worker.site_id : null,
+    tareekh: tareekh,
+    rakam: rakam,
+    prakar: prakar,
+    tareeka: tareeka,
+    remarks: remarks
+  };
+
+  appData.worker_payments.push(payment);
+  dataMehfoozKarein();
+  activityJodein('मजदूरी पेमेंट', `${worker ? worker.naam : ''} को ${rupayeFormat(rakam)} दिए`);
+  modalBandKarein();
+  toastDikhaye('पेमेंट सफलतापूर्वक दर्ज हो गई!');
+  renderApp();
+}
+
+function workerPaymentMitayein(payId, workerId) {
+  if (confirm("क्या आप वाकई यह पेमेंट रिकॉर्ड मिटाना चाहते हैं?")) {
+    appData.worker_payments = appData.worker_payments.filter(p => p.id !== payId);
+    dataMehfoozKarein();
+    activityJodein('मजदूरी पेमेंट मिटाई', payId);
+    toastDikhaye('पेमेंट रिकॉर्ड मिटा दिया गया!');
+    viewBadlo('worker_detail', workerId);
+  }
+}
+
+function dailyTransactionModalKholo(type) {
+  const isAaya = type === 'aaya';
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">${isAaya ? 'Daily Khata - पैसा आया' : 'Daily Khata - खर्चा दर्ज करें'}</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="dailyTransactionSave(event, '${type}')">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">तारीख *</label>
+          <input type="date" id="dtx-date" class="form-control" required value="${aajKiTareekh()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">रकम (रुपये) *</label>
+          <input type="number" id="dtx-rakam" class="form-control" required placeholder="0" min="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">${isAaya ? 'पैसा कहाँ से / किसलिए आया?' : 'किस काम में खर्च हुआ?'}</label>
+        <input type="text" id="dtx-vivran" class="form-control" required placeholder="${isAaya ? 'दुकान सेल / ऑर्डर' : 'दुकान बिल / डीजल'}">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">माध्यम</label>
+          <select id="dtx-tareeka" class="form-control">
+            <option value="कैश">कैश</option>
+            <option value="UPI">UPI</option>
+            <option value="बैंक">बैंक</option>
+            <option value="दूसरा">दूसरा</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">कैटेगरी (चुनें या लिखें)</label>
+          <input type="text" id="dtx-shreni" list="daily-cat-list" class="form-control" value="${isAaya ? 'बिजनेस बिक्री' : 'दुकान खर्च'}">
+          <datalist id="daily-cat-list">
+            ${isAaya ? appData.settings.income_sources_daily.map(c => `<option value="${c}">`).join('') : appData.settings.categories_daily.map(c => `<option value="${c}">`).join('')}
+          </datalist>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="dtx-remarks" class="form-control" placeholder="टिप्पणी..."></textarea>
+      </div>
+      <button type="submit" class="btn ${isAaya ? 'btn-success' : 'btn-danger'}">महफ़ूज़ करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function dailyTransactionSave(e, type) {
+  e.preventDefault();
+  const tareekh = document.getElementById('dtx-date').value;
+  const rakam = Number(document.getElementById('dtx-rakam').value);
+  const vivran = document.getElementById('dtx-vivran').value.trim();
+  const tareeka = document.getElementById('dtx-tareeka').value;
+  const shreni = document.getElementById('dtx-shreni').value.trim() || 'दुकान खर्च';
+  const remarks = document.getElementById('dtx-remarks').value.trim();
+
+  if (!rakam || rakam <= 0) return alert('रकम सही भरें!');
+
+  const item = {
+    id: 'dt_' + Date.now(),
+    tareekh: tareekh,
+    prakar: type,
+    shreni: shreni,
+    srot: shreni,
+    kisliye: vivran,
+    rakam: rakam,
+    tareeka: tareeka,
+    remarks: remarks
+  };
+
+  appData.daily_transactions.push(item);
+  dataMehfoozKarein();
+  activityJodein(type === 'aaya' ? 'दैनिक पैसा आया' : 'दैनिक खर्च', `${rupayeFormat(rakam)} - ${vivran}`);
+  modalBandKarein();
+  toastDikhaye('हिसाब दर्ज हो गया!');
+  viewBadlo('rozana');
+}
+
+function dailyTransactionMitayein(id) {
+  if (confirm("क्या आप वाकई यह हिसाब मिटाना चाहते हैं?")) {
+    appData.daily_transactions = appData.daily_transactions.filter(t => t.id !== id);
+    dataMehfoozKarein();
+    activityJodein('रोज़ाना हिसाब मिटाया', id);
+    toastDikhaye('हिसाब मिटा दिया गया!');
+    viewBadlo('rozana');
+  }
+}
+
+function udhaarNayaModalKholo(defaultDisha = 'diya') {
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">नया उधार दर्ज करें</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="udhaarNayaSave(event)">
+      <div class="form-group">
+        <label class="form-label">उधार का प्रकार *</label>
+        <select id="ln-f-disha" class="form-control">
+          <option value="diya" ${defaultDisha === 'diya' ? 'selected' : ''}>मैंने उधार दिया (मुझे वापस लेना है)</option>
+          <option value="liya" ${defaultDisha === 'liya' ? 'selected' : ''}>मैंने उधार लिया (मुझे वापस देना है)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">व्यक्ति का नाम *</label>
+        <input type="text" id="ln-f-naam" class="form-control" required placeholder="जैसे: सुरेश भाई">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">मोबाइल नंबर</label>
+          <input type="tel" id="ln-f-mobile" class="form-control" placeholder="फोन नंबर">
+        </div>
+        <div class="form-group">
+          <label class="form-label">रकम (रुपये) *</label>
+          <input type="number" id="ln-f-rakam" class="form-control" required placeholder="0" min="1">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">तारीख *</label>
+          <input type="date" id="ln-f-tareekh" class="form-control" required value="${aajKiTareekh()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">वापस करने की तारीख</label>
+          <input type="date" id="ln-f-due" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">किसलिए दिया / लिया?</label>
+        <input type="text" id="ln-f-kisliye" class="form-control" placeholder="उद्देश्य...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="ln-f-remarks" class="form-control" placeholder="टिप्पणी..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">उधार महफ़ूज़ करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function udhaarModalKholo(disha) {
+  udhaarNayaModalKholo(disha);
+}
+
+function udhaarNayaSave(e) {
+  e.preventDefault();
+  const disha = document.getElementById('ln-f-disha').value;
+  const naam = document.getElementById('ln-f-naam').value.trim();
+  const rakam = Number(document.getElementById('ln-f-rakam').value);
+  const tareekh = document.getElementById('ln-f-tareekh').value;
+
+  if (!naam) return alert('व्यक्ति का नाम जरूर भरें!');
+  if (!rakam || rakam <= 0) return alert('रकम सही भरें!');
+
+  const loan = {
+    id: 'ln_' + Date.now(),
+    aadmi_naam: naam,
+    mobile: document.getElementById('ln-f-mobile').value.trim(),
+    disha: disha,
+    rakam: rakam,
+    tareekh: tareekh,
+    wapas_tareekh: document.getElementById('ln-f-due').value,
+    kisliye: document.getElementById('ln-f-kisliye').value.trim(),
+    remarks: document.getElementById('ln-f-remarks').value.trim()
+  };
+
+  appData.loans.push(loan);
+  dataMehfoozKarein();
+  activityJodein(disha === 'diya' ? 'उधार दिया' : 'उधार लिया', `${naam} को ${rupayeFormat(rakam)}`);
+  modalBandKarein();
+  toastDikhaye('उधार खाता दर्ज हो गया!');
+  udhaarSubTab = disha;
+  viewBadlo('udhaar');
+}
+
+function udhaarRepaymentModalKholo(loanId, bakiRakam, disha) {
+  const loan = appData.loans.find(l => l.id === loanId);
+  if (!loan) return;
+
+  const isDiya = disha === 'diya';
+  const html = `
+    <div class="modal-header">
+      <div class="modal-title">${isDiya ? 'उधार वापसी मिला दर्ज करें' : 'उधार चुकाया दर्ज करें'}</div>
+      <button class="modal-close" onclick="modalBandKarein()">&times;</button>
+    </div>
+    <form onsubmit="udhaarRepaymentSave(event, '${loan.id}')">
+      <div style="background:var(--primary-light); padding:10px; border-radius:8px; margin-bottom:12px; font-size:13px;">
+        व्यक्ति: <strong>${loan.aadmi_naam}</strong> | अभी बाकी: <strong style="color:var(--danger);">${rupayeFormat(bakiRakam)}</strong>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">तारीख *</label>
+          <input type="date" id="lr-f-date" class="form-control" required value="${aajKiTareekh()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">कितने रुपये मिले? *</label>
+          <input type="number" id="lr-f-rakam" class="form-control" required max="${bakiRakam}" value="${bakiRakam}" min="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">माध्यम</label>
+        <select id="lr-f-tareeka" class="form-control">
+          <option value="कैश">कैश</option>
+          <option value="UPI">UPI</option>
+          <option value="बैंक">बैंक</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">खास बात / Remarks</label>
+        <textarea id="lr-f-remarks" class="form-control" placeholder="टिप्पणी..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-success">वापसी महफ़ूज़ करें</button>
+    </form>
+  `;
+  modalKholo(html);
+}
+
+function udhaarRepaymentSave(e, loanId) {
+  e.preventDefault();
+  const rakam = Number(document.getElementById('lr-f-rakam').value);
+  const tareekh = document.getElementById('lr-f-date').value;
+  const tareeka = document.getElementById('lr-f-tareeka').value;
+  const remarks = document.getElementById('lr-f-remarks').value.trim();
+
+  if (!rakam || rakam <= 0) return alert('रकम सही भरें!');
+
+  const item = {
+    id: 'lr_' + Date.now(),
+    loan_id: loanId,
+    tareekh: tareekh,
+    rakam: rakam,
+    tareeka: tareeka,
+    remarks: remarks
+  };
+
+  appData.loan_repayments.push(item);
+  dataMehfoozKarein();
+  activityJodein('उधार वापसी', `${rupayeFormat(rakam)} वापस दर्ज किए`);
+  modalBandKarein();
+  toastDikhaye('उधार वापसी दर्ज हो गई!');
+  renderApp();
+}
+
+function udhaarMitayein(loanId) {
+  if (confirm("क्या आप वाकई यह उधार मिटाना चाहते हैं?")) {
+    appData.loans = appData.loans.filter(l => l.id !== loanId);
+    appData.loan_repayments = appData.loan_repayments.filter(r => r.loan_id !== loanId);
+    dataMehfoozKarein();
+    activityJodein('उधार मिटाया', loanId);
+    toastDikhaye('उधार मिटा दिया गया!');
+    renderApp();
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  dataLoadKarein();
+  renderApp();
+});
+</script>
+</body>
+</html>
