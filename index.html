@@ -966,29 +966,66 @@ let appData = {
   activity_logs: []
 };
 
-// 100% BULLET-PROOF FAILSAFE UNLOCK
-window.unlockAppKarein = function() {
+// CLOUD-FIRST SAFE UNLOCK: Pehle cloud data load karega fir unlock karega
+window.unlockAppKarein = async function() {
   const inputEl = document.getElementById('nativePinInput');
+  const btnEl = document.querySelector('.lock-btn');
   const entered = inputEl ? inputEl.value.trim() : '';
   
-  let validPin = '1234';
-  if (appData && appData.settings && appData.settings.pin && String(appData.settings.pin).trim() !== '') {
-    validPin = String(appData.settings.pin).trim();
+  if (!entered) {
+    toastDikhaye('कृपया PIN दर्ज करें।');
+    if (inputEl) inputEl.focus();
+    return;
   }
 
-  // Entered pin, saved pin, default 1234 ya master 0000 sab check honge
-  if (entered === validPin || entered === '1234' || entered === '0000') {
+  try {
+    if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'डेटा लोड हो रहा है…'; }
+
+    if (window.firebaseReady) await window.firebaseReady;
+
+    let cloudRecovered = false;
+    if (window.loadFromFirebaseCloud) {
+      cloudRecovered = await window.loadFromFirebaseCloud();
+    }
+
+    const localRaw = localStorage.getItem(STORAGE_KEY);
+    let localHasRecords = false;
+    if (localRaw) {
+      try {
+        const local = JSON.parse(localRaw);
+        localHasRecords = !!(local && (
+          (Array.isArray(local.sites) && local.sites.length) ||
+          (Array.isArray(local.site_transactions) && local.site_transactions.length) ||
+          (Array.isArray(local.daily_transactions) && local.daily_transactions.length) ||
+          (Array.isArray(local.workers) && local.workers.length) ||
+          (Array.isArray(local.loans) && local.loans.length) ||
+          (Array.isArray(local.worker_payments) && local.worker_payments.length)
+        ));
+      } catch (_) {}
+    }
+
+    // Check PIN: default 1234, saved pin ya emergency master 0000
+    let validPin = (appData && appData.settings && appData.settings.pin)
+      ? String(appData.settings.pin).trim() : '1234';
+      
+    if (entered === validPin || entered === '1234' || entered === '0000') {
+      const scr = document.getElementById('appLockScreen');
+      if (scr) scr.style.display = 'none';
+      renderApp();
+      if (cloudRecovered && window.startRealtimeSync) window.startRealtimeSync();
+      toastDikhaye(cloudRecovered ? '☁️ क्लाउड हिसाब लोड हो गया!' : '✅ ऐप अनलॉक!');
+    } else {
+      toastDikhaye('❌ गलत PIN!');
+      if (inputEl) { inputEl.value = ''; inputEl.focus(); }
+    }
+  } catch (e) {
+    console.error('Unlock error:', e);
+    // Fallback simple unlock
     const scr = document.getElementById('appLockScreen');
     if (scr) scr.style.display = 'none';
-    toastDikhaye('✅ ऐप अनलॉक हुआ!');
-    if (window.loadFromFirebaseCloud) window.loadFromFirebaseCloud();
-    if (window.startRealtimeSync) window.startRealtimeSync();
-  } else {
-    toastDikhaye('❌ गलत PIN! (डिफ़ॉल्ट PIN: 1234)');
-    if (inputEl) {
-      inputEl.value = '';
-      inputEl.focus();
-    }
+    renderApp();
+  } finally {
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'अनलॉक करें 🔓'; }
   }
 };
 
@@ -1015,8 +1052,6 @@ function dataLoadKarein() {
     } catch(e) {
       console.error(e);
     }
-  } else {
-    dataMehfoozKarein();
   }
 }
 
@@ -3791,7 +3826,7 @@ function workerPaymentModalKholo(preselectedWorkerId = null) {
       <div class="form-group">
         <label class="form-label">मिस्त्री / हेल्पर चुनें *</label>
         <select id="wp-f-worker" class="form-control" onchange="workerPaymentChangeSummary(this.value)">
-          ${appData.workers.map(w => `<option value="${w.id}" ${w.id === selectedWorker.id ? 'selected' : ''}>${w.naam} (${w.kaam \vert{}\vert{} 'मिस्त्री'}) - रेट: ₹${w.rate}</option>`).join('')}
+          ${appData.workers.map(w => `<option value="${w.id}" ${w.id === selectedWorker.id ? 'selected' : ''}>${w.naam} (${w.kaam || 'मिस्त्री'}) - रेट: ₹${w.rate}</option>`).join('')}
         </select>
       </div>
 
@@ -4386,83 +4421,100 @@ window.addEventListener('DOMContentLoaded', () => {
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, doc, setDoc, getDoc, onSnapshot, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const firebaseConfig = { 
-    apiKey: "AIzaSyCEDfTc2S-rt85yybINx0NVixeQkVczxOQ", 
-    authDomain: "rahmat-foundation.firebaseapp.com", 
-    projectId: "rahmat-foundation", 
-    storageBucket: "rahmat-foundation.firebasestorage.app", 
-    messagingSenderId: "1000128409503", 
-    appId: "1:1000128409503:web:94173d012d4aace1a7d7aa", 
-    measurementId: "G-J6PPRSZ6P6" 
+  const firebaseConfig = {
+    apiKey: "AIzaSyCEDfTc2S-rt85yybINx0NVixeQkVczxOQ",
+    authDomain: "rahmat-foundation.firebaseapp.com",
+    projectId: "rahmat-foundation",
+    storageBucket: "rahmat-foundation.firebasestorage.app",
+    messagingSenderId: "1000128409503",
+    appId: "1:1000128409503:web:94173d012d4aace1a7d7aa",
+    measurementId: "G-J6PPRSZ6P6"
   };
+
+  let resolveFirebaseReady;
+  window.firebaseReady = new Promise(resolve => { resolveFirebaseReady = resolve; });
+  window.__firebaseCloudLoaded = false;
+  window.__firebaseCloudVerified = false;
 
   try {
     const fbApp = initializeApp(firebaseConfig);
     const db = initializeFirestore(fbApp, {
       localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})
     });
+    const cloudDocRef = doc(db, "cloudAppData", "jaipurDoorSolutionsRecord");
+
+    function isUsablePayload(payload) {
+      if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return false;
+      return !!(payload.settings && typeof payload.settings === 'object' &&
+        Array.isArray(payload.sites) && Array.isArray(payload.site_transactions) &&
+        Array.isArray(payload.workers) && Array.isArray(payload.daily_transactions) &&
+        Array.isArray(payload.loans));
+    }
 
     async function syncToFirebaseCloud() {
+      if (!window.__firebaseCloudVerified || !window.__firebaseCloudLoaded) {
+        return false;
+      }
       try {
-        let payload = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-        await setDoc(doc(db, "cloudAppData", "jaipurDoorSolutionsRecord"), {
-          appPayload: payload,
-          lastUpdated: new Date().toISOString()
-        });
-        const badge = document.getElementById("cloudStatusBadge");
-        if(badge) {
-          badge.innerText = "☁️ Synced";
-          badge.style.background = "#dcfce7";
-          badge.style.color = "#15803d";
-        }
-      } catch(e) {
-        console.log("Offline notice:", e);
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        const payload = JSON.parse(raw);
+        if (!isUsablePayload(payload)) return false;
+        await setDoc(cloudDocRef, { appPayload: payload, lastUpdated: new Date().toISOString() });
+        const badge = document.getElementById('cloudStatusBadge');
+        if (badge) { badge.innerText = '☁️️ Synced'; badge.style.background = '#dcfce7'; badge.style.color = '#15803d'; }
+        return true;
+      } catch (e) {
+        return false;
       }
     }
 
     async function loadFromFirebaseCloud() {
       try {
-        let snap = await getDoc(doc(db, "cloudAppData", "jaipurDoorSolutionsRecord"));
-        if (snap.exists()) {
-          let cloudData = snap.data();
-          if (cloudData && cloudData.appPayload) {
-            appData = cloudData.appPayload;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-            renderApp();
-            toastDikhaye("☁️ क्लाउड डेटा लोड हो गया!");
-          }
-        }
-      } catch(e) {
-        console.log("Cloud load fallback:", e);
+        const snap = await getDoc(cloudDocRef);
+        if (!snap.exists()) return false;
+        const cloudData = snap.data();
+        if (!cloudData || !isUsablePayload(cloudData.appPayload)) return false;
+
+        appData = cloudData.appPayload;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        window.__firebaseCloudLoaded = true;
+        window.__firebaseCloudVerified = true;
+        renderApp();
+        const badge = document.getElementById('cloudStatusBadge');
+        if (badge) { badge.innerText = '☁️ Data Restored'; badge.style.background = '#dcfce7'; badge.style.color = '#15803d'; }
+        return true;
+      } catch (e) {
+        return false;
       }
     }
 
+    let realtimeUnsubscribe = null;
     function startRealtimeSync() {
+      if (!window.__firebaseCloudVerified) return;
+      if (realtimeUnsubscribe) return;
       try {
-        const docRef = doc(db, "cloudAppData", "jaipurDoorSolutionsRecord");
-        onSnapshot(docRef, (snapshot) => {
+        realtimeUnsubscribe = onSnapshot(cloudDocRef, (snapshot) => {
           if (!snapshot.exists()) return;
           const cloudData = snapshot.data();
-          if (!cloudData || !cloudData.appPayload) return;
-          
-          let localRaw = localStorage.getItem(STORAGE_KEY);
-          let cloudRaw = JSON.stringify(cloudData.appPayload);
+          if (!cloudData || !isUsablePayload(cloudData.appPayload)) return;
+          const cloudRaw = JSON.stringify(cloudData.appPayload);
+          const localRaw = localStorage.getItem(STORAGE_KEY);
           if (localRaw !== cloudRaw) {
             appData = cloudData.appPayload;
             localStorage.setItem(STORAGE_KEY, cloudRaw);
             renderApp();
           }
-        });
-      } catch(e) {
-        console.log("Realtime sync listener:", e);
-      }
+        }, (err) => console.error(err));
+      } catch (e) {}
     }
 
     window.syncToFirebaseCloud = syncToFirebaseCloud;
     window.loadFromFirebaseCloud = loadFromFirebaseCloud;
     window.startRealtimeSync = startRealtimeSync;
-  } catch(err) {
-    console.log("Firebase module notice:", err);
+    if (resolveFirebaseReady) resolveFirebaseReady(true);
+  } catch (err) {
+    if (resolveFirebaseReady) resolveFirebaseReady(false);
   }
 </script>
 </body>
